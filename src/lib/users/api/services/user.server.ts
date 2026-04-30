@@ -4,14 +4,16 @@ import apiClient from "@config/api.config";
 import environment from "@config/environment.config";
 import {
   User,
-  UserCreatePayload,
+  UserMutationPayload,
+  UserFilters,
   UserSearchFilter,
+  UsersResponse,
 } from "@/lib/users/api/types";
 import {
   parseUserCreate,
   parseUserUpdate,
-  UserUpdateFormData,
-} from "@lib/users/schemas/user.schema";
+  UserUpdateFormValues,
+} from "@lib/users/schemas/user";
 import { getLogger } from "@config/logger.config";
 import { ApiErrorResponse } from "@/lib/_/errors/api-error.server";
 import { Result } from "@/lib/_/errors/response.model";
@@ -33,10 +35,17 @@ const {
 
 const logger = getLogger("server");
 
-export async function getUsers(): Promise<Result<User[], ApiError>> {
+export async function getUsers(
+  filters: UserFilters,
+): Promise<Result<UsersResponse, ApiError>> {
   try {
-    const res = await apiClient(true).get<User[]>(usersUrl);
-    logger.info({ count: res.data.length }, "geted users");
+    const queryParams = new URLSearchParams(
+      filters as Record<string, string>,
+    ).toString();
+    const res = await apiClient(true).get<UsersResponse>(
+      `${usersUrl}?${queryParams}`,
+    );
+    logger.info({ count: res.data.meta.total }, "geted users");
     return { ok: true, data: res.data };
   } catch (error) {
     logger.error({ context: "getUsers" }, "Error getting users");
@@ -51,7 +60,7 @@ export async function getUsers(): Promise<Result<User[], ApiError>> {
  * Create a new user
  */
 export async function createUser(
-  user: UserCreatePayload,
+  user: UserMutationPayload,
 ): Promise<Result<User, ApiError>> {
   /**
    * Validate input data
@@ -121,7 +130,7 @@ export async function searchUsersFilter(
 
 export async function updateUser(
   id: number,
-  user: UserUpdateFormData,
+  user: UserUpdateFormValues,
 ): Promise<Result<User, ApiError>> {
   const idError = validateId(id);
   if (idError) return idError;

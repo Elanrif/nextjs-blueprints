@@ -1,43 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
-import type { UserSearchFilter } from "../types";
+import { queryOptions } from "@tanstack/react-query";
+import type { UserFilters } from "../types";
 import { userKeys } from ".";
-import {
-  getUserById,
-  getUsers,
-  searchUsersFilter,
-} from "../services/user.server";
+import { getUserById, getUsers } from "../services/user.server";
 
-export function useUsers() {
-  return useQuery({
-    queryKey: userKeys.list(),
-    queryFn: async () => {
-      const res = await getUsers();
-      if (!res.ok) throw new Error(res.error.detail);
-      return res.data;
-    },
+export const usersQueryOptions = (filters: UserFilters) =>
+  queryOptions({
+    queryKey: userKeys.list(filters),
+    queryFn: () => getUsers(filters),
   });
-}
 
-export function useUser(id: number) {
-  return useQuery({
+export const userQueryOptions = (id: number) =>
+  queryOptions({
     queryKey: userKeys.detail(id),
-    queryFn: async () => {
-      const res = await getUserById(id);
-      if (!res.ok) throw new Error(res.error.detail);
-      return res.data;
-    },
-    enabled: !!id,
+    queryFn: () => getUserById(id),
   });
-}
-
-export function useSearchUsers(filters: UserSearchFilter) {
-  return useQuery({
-    queryKey: userKeys.search(filters),
-    queryFn: async () => {
-      const res = await searchUsersFilter(filters);
-      if (!res.ok) throw new Error(res.error.detail);
-      return res.data;
-    },
-    enabled: Object.values(filters).some((v) => v !== undefined && v !== ""),
-  });
-}

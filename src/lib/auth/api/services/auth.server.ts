@@ -3,7 +3,7 @@
 import apiClient from "@config/api.config";
 import environment from "@config/environment.config";
 import { AxiosResponse } from "axios";
-import { parseResetPassword } from "@lib/users/schemas/user.schema";
+import { parseResetPassword } from "@lib/users/schemas/user";
 import { getLogger } from "@/config/logger.config";
 import {
   ChangePasswordProfileFormData,

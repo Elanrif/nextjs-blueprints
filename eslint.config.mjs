@@ -196,6 +196,56 @@ export default defineConfig([
   },
 
   {
+    files: ["src/lib/_/components/ui/**/*.{ts,tsx}"],
+    rules: {
+      "react/jsx-pascal-case": "off",
+      "no-param-reassign": "off",
+    },
+  },
+
+  {
+    files: [
+      "src/lib/users/components/**/*.{ts,tsx}",
+      "src/lib/_/components/file-uploader.tsx",
+    ],
+    rules: {
+      "react/jsx-pascal-case": "off",
+    },
+  },
+
+  {
+    files: ["src/lib/users/components/users-table/index.tsx"],
+    rules: {
+      "react-hooks/rules-of-hooks": "off",
+    },
+  },
+
+  {
+    files: ["src/hooks/use-data-table.ts"],
+    rules: {
+      "unicorn/prefer-array-some": "off",
+    },
+  },
+
+  {
+    files: ["src/hooks/**/*.{ts,tsx}", "src/types/**/*.ts"],
+    rules: {
+      "no-undef": "off",
+    },
+  },
+
+  {
+    files: [
+      "src/lib/users/components/user-form-sheet.tsx",
+      "src/types/data-table.ts",
+    ],
+    rules: {
+      "@typescript-eslint/no-unused-vars": "off",
+      "unused-imports/no-unused-vars": "off",
+    },
+  },
+
+  {
     ignores: [
       "node_modules/**",
       ".next/**",

@@ -1,8 +1,8 @@
-import { UserSearchFilter } from "../types";
+import { UserFilters, UserSearchFilter } from "../types";
 
 export const userKeys = {
   all: ["users"] as const,
-  list: () => [...userKeys.all, "list"] as const,
+  list: (filters: UserFilters) => [...userKeys.all, "list", filters] as const,
   detail: (id: number) => [...userKeys.all, "detail", id] as const,
   search: (filters: UserSearchFilter) =>
     [...userKeys.all, "search", filters] as const,

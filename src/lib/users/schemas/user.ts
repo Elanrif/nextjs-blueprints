@@ -34,33 +34,33 @@ const UserBaseSchema = z.object({
 /**
  * Reset password schema with validation
  */
-export const ResetPasswordSchema = UserBaseSchema.pick({
+export const resetPasswordSchema = UserBaseSchema.pick({
   email: true,
 }).extend({
   newPassword: UserBaseSchema.shape.password,
   code: z.string().min(1, "Reset code is required"),
   resetToken: z.string().min(1, "Reset token is required"),
 });
-export type ResetPasswordFormData = z.infer<typeof ResetPasswordSchema>;
-export const parseResetPassword = ResetPasswordSchema.safeParse;
+export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
+export const parseResetPassword = resetPasswordSchema.safeParse;
 
 /**
  * User creation schema with password confirmation validation
  */
-export const UserSchema = UserBaseSchema.refine(
+export const userSchema = UserBaseSchema.refine(
   (data) => data.password === data.confirmPassword,
   {
     message: "Passwords do not match",
     path: ["confirmPassword"],
   },
 );
-export type UserFormData = z.infer<typeof UserSchema>;
-export const parseUserCreate = UserSchema.safeParse;
+export type UserFormValues = z.infer<typeof userSchema>;
+export const parseUserCreate = userSchema.safeParse;
 
 /**
  * User update schema — all fields optional with password validation
  */
-export const UserUpdateSchema = UserBaseSchema.partial().refine(
+export const userUpdateSchema = UserBaseSchema.partial().refine(
   (data) => {
     if (data.password !== undefined || data.confirmPassword !== undefined) {
       if (
@@ -80,5 +80,5 @@ export const UserUpdateSchema = UserBaseSchema.partial().refine(
     path: ["confirmPassword"],
   },
 );
-export type UserUpdateFormData = z.infer<typeof UserUpdateSchema>;
-export const parseUserUpdate = UserUpdateSchema.safeParse;
+export type UserUpdateFormValues = z.infer<typeof userUpdateSchema>;
+export const parseUserUpdate = userUpdateSchema.safeParse;

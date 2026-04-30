@@ -2,9 +2,10 @@ import { AxiosResponse } from "axios";
 import { proxyEnvironment } from "@config/proxy-api.config";
 import {
   User,
-  UserCreatePayload,
-  UserUpdatePayload,
   UserSearchFilter,
+  UserFilters,
+  UserMutationPayload,
+  UsersResponse,
 } from "@lib/users/api/types";
 import { frontendHttp } from "@config/axios/frontend-http.config";
 import { ApiError } from "@/lib/_/errors/api-error";
@@ -27,11 +28,16 @@ const {
 /**
  * Fetch all users (client-side)
  */
-export async function fetchUsers(): Promise<Result<User[], ApiError>> {
+export async function fetchUsers(
+  filters: UserFilters,
+): Promise<Result<UsersResponse, ApiError>> {
+  const queryParams = new URLSearchParams(
+    filters as Record<string, string>,
+  ).toString();
   const res = await frontendHttp().get<
     unknown,
-    AxiosResponse<Result<User[], ApiError>>
-  >(usersUrl);
+    AxiosResponse<Result<UsersResponse, ApiError>>
+  >(`${usersUrl}?${queryParams}`);
   return res.data;
 }
 
@@ -53,7 +59,7 @@ export async function fetchUserById(
  */
 export async function updateUser(
   id: number,
-  user: UserUpdatePayload,
+  user: UserMutationPayload,
 ): Promise<Result<User, ApiError>> {
   const res = await frontendHttp().patch<
     unknown,
@@ -66,7 +72,7 @@ export async function updateUser(
  * Create a new user (client-side)
  */
 export async function createUser(
-  user: UserCreatePayload,
+  user: UserMutationPayload,
 ): Promise<Result<User, ApiError>> {
   const res = await frontendHttp().post<
     unknown,

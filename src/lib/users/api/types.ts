@@ -8,6 +8,14 @@ export enum UserRole {
   ADMIN = "ADMIN",
 }
 
+export type UserFilters = {
+  page?: number;
+  limit?: number;
+  roles?: string;
+  search?: string;
+  sort?: string;
+};
+
 export interface User {
   id: number;
   email: string;
@@ -21,18 +29,14 @@ export interface User {
   updatedAt: string;
 }
 
-/**
- * Payload for creating a new user (includes password)
- */
-export interface UserCreatePayload {
-  email: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  password: string;
-  confirmPassword: string;
-  avatarUrl?: string;
-}
+export type UsersResponse = {
+  data: User[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+};
 
 export interface UserSummary {
   id: number;
@@ -49,8 +53,6 @@ export interface UserLogin {
   user: User;
 }
 
-export type UserUpdatePayload = Partial<User>;
-
 export interface UserSearchFilter {
   email?: string;
   firstName?: string;
@@ -63,4 +65,14 @@ export interface ResetPassword {
   resetToken: string;
   email: string;
   newPassword: string;
+}
+
+export interface UserMutationPayload {
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  password: string;
+  confirmPassword: string;
+  avatarUrl?: string;
 }
