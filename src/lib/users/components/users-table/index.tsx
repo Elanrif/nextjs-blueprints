@@ -31,15 +31,19 @@ export function UsersTable() {
   const { data } = useSuspenseQuery(usersQueryOptions(filters));
 
   if (!data.ok) {
-    console.error("Error fetching users:", data.error);
-    return null;
+    console.warn("Error fetching users:", data.error);
   }
 
-  const usersResponse = data.data;
-  const pageCount = Math.ceil(usersResponse.meta.total / params.perPage);
+  const usersResponse = data.ok
+    ? data.data
+    : {
+        data: [],
+        meta: { total: 0, page: 1, limit: params.perPage, totalPages: 0 },
+      };
+  const pageCount = Math.ceil((usersResponse.meta.total || 0) / params.perPage);
 
   const { table } = useDataTable({
-    data: usersResponse.data,
+    data: usersResponse.data ?? [],
     columns,
     pageCount,
     shallow: true,
@@ -50,9 +54,28 @@ export function UsersTable() {
   });
 
   return (
-    <DataTable table={table}>
-      <DataTableToolbar table={table} />
-    </DataTable>
+    <>
+      {/* <pre className="p-2 text-xs">
+        {JSON.stringify(
+          { meta: usersResponse.meta, data: usersResponse.data },
+          null,
+          2,
+        )}
+      </pre>
+      <pre className="p-2 text-xs">
+        {`table.getRowModel().rows.length: ${table.getRowModel().rows.length}`}
+      </pre>
+      <pre className="p-2 text-xs">
+        {JSON.stringify(
+          table.getRowModel().rows.map((r) => r.original),
+          null,
+          2,
+        )}
+      </pre> */}
+      <DataTable table={table}>
+        <DataTableToolbar table={table} />
+      </DataTable>
+    </>
   );
 }
 

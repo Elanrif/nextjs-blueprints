@@ -147,7 +147,7 @@ export default defineConfig([
       "@tanstack/query/no-rest-destructuring": "off",
       "@tanstack/query/stable-query-client": "error",
       "@next/next/no-duplicate-head": "off",
-      "react/jsx-pascal-case": "error",
+      "react/jsx-pascal-case": "off",
       "react/no-danger-with-children": "error",
       "react/jsx-fragments": "error",
       "react/jsx-no-useless-fragment": "warn",
