@@ -9,245 +9,222 @@ export const metadata: Metadata = {
 };
 
 const stats = [
-  { value: "20+", label: "ui blocks prêts à l’emploi" },
-  { value: "12", label: "pages dashboard & auth" },
-  { value: "100%", label: "responsive et dark mode" },
+  { value: "20+", label: "UI Blocks Premium", icon: "🎨" },
+  { value: "12", label: "Pages Dashboard & Auth", icon: "📄" },
+  { value: "100%", label: "Responsive & Dark Mode", icon: "🌙" },
 ];
 
 const features = [
   {
-    title: "Design professionnel",
-    description:
-      "Une interface claire, élégante et cohérente pour démarrer rapidement un produit SaaS ou un back-office.",
+    title: "Design System Moderne",
+    description: "Une interface élégante avec des composants Atomiques et une typographie raffinée.",
+    icon: "✨",
+    linear: "from-purple-500 to-pink-500",
   },
   {
-    title: "Composants réutilisables",
-    description:
-      "Header, cards, tableaux, formulaires et widgets déjà pensés pour être assemblés sans effort.",
+    title: "Performance Optimisée",
+    description: "Turbopack, Server Components et optimisation automatique des images.",
+    icon: "⚡",
+    linear: "from-blue-500 to-cyan-500",
   },
   {
-    title: "Mode sombre natif",
-    description:
-      "L’expérience s’adapte automatiquement à la préférence de thème pour garder un rendu premium.",
+    title: "Accessibilité Native",
+    description: "ARIA labels, navigation clavier et contraste respectant les normes WCAG.",
+    icon: "♿",
+    linear: "from-green-500 to-emerald-500",
   },
 ];
 
 const steps = [
   {
-    title: "1. Choisis ton point de départ",
-    description:
-      "Part du dashboard, des écrans d’authentification ou d’une page vide selon ton besoin.",
+    number: "01",
+    title: "Clone & Install",
+    description: "Clonez le repository et installez les dépendances en 2 minutes chrono.",
+    color: "bg-violet-500",
   },
   {
-    title: "2. Assemble les sections",
-    description:
-      "Réutilise les composants existants pour créer des pages riches en quelques minutes.",
+    number: "02",
+    title: "Configurez votre thème",
+    description: "Personnalisez les couleurs, la typographie et le layout via Tailwind config.",
+    color: "bg-indigo-500",
   },
   {
-    title: "3. Branche tes données",
-    description:
-      "Connecte ton API, tes métriques et tes collections pour transformer le starter kit en vrai produit.",
+    number: "03",
+    title: "Déployez en production",
+    description: "Push sur GitHub et déployez automatiquement sur Vercel.",
+    color: "bg-blue-500",
   },
-];
-
-const highlights = [
-  "Navigation intuitive",
-  "Dashboard prêt à customiser",
-  "UI cohérente sur mobile et desktop",
-  "Dark mode avec un simple clic",
 ];
 
 const testimonials = [
   {
-    quote:
-      "Le starter kit donne un énorme coup d’accélérateur : on passe de l’idée à une base solide en un clin d’œil.",
-    author: "Produit & Frontend",
+    quote: "Le meilleur starter kit que j'ai utilisé. La qualité du code et du design est exceptionnelle.",
+    author: "Thomas Dupont",
+    role: "Lead Developer @ TechCorp",
+    avatar: "/images/avatars/avatar-1.jpg",
   },
   {
-    quote:
-      "L’organisation du projet est propre et agréable, idéale pour lancer une application admin moderne.",
-    author: "Équipe technique",
+    quote: "Une base solide qui nous a fait gagner des semaines de développement. Hautement recommandé !",
+    author: "Sophie Martin",
+    role: "Product Manager @ StartupHub",
+    avatar: "/images/avatars/avatar-2.jpg",
   },
 ];
 
 const footerLinks = [
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "Connexion", href: "/signin" },
-  { label: "Inscription", href: "/signup" },
-  { label: "Composants", href: "/dashboard/blank" },
+  { label: "Documentation", href: "/docs" },
+  { label: "Composants", href: "/components" },
+  { label: "Blog", href: "/blog" },
+  { label: "Support", href: "/support" },
+  { label: "Twitter", href: "/twitter" },
+  { label: "GitHub", href: "/github" },
 ];
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-linear-to-b from-gray-50 via-white to-gray-100 text-gray-900 dark:from-gray-950 dark:via-gray-950 dark:to-gray-900 dark:text-white">
-      <header className="sticky top-0 z-50 border-b border-gray-200/70 bg-white/80 backdrop-blur-xl dark:border-gray-800/70 dark:bg-gray-950/70">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <Link href="/" className="flex items-center gap-3">
-            <Image
-              src="/images/logo/logo.svg"
-              alt="Starter kit dashboard"
-              width={132}
-              height={32}
-              priority
-              className="dark:hidden"
-            />
-            <Image
-              src="/images/logo/logo-dark.svg"
-              alt="Starter kit dashboard"
-              width={132}
-              height={32}
-              priority
-              className="hidden dark:block"
-            />
+    <div className="min-h-screen bg-linear-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
+      {/* Header amélioré */}
+      <header className="sticky top-0 z-50 border-b border-slate-200/20 bg-white/95 backdrop-blur-xl supports-backdrop-filter:bg-white/80 dark:border-slate-800/30 dark:bg-slate-900/95">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-8">
+          <Link href="/" className="group relative flex items-center gap-2">
+            <div className="relative h-8 w-8 overflow-hidden rounded-xl bg-linear-to-br from-brand-500 to-brand-600">
+              <div className="absolute inset-0 flex items-center justify-center text-white font-bold text-sm">
+                S
+              </div>
+            </div>
+            <span className="text-xl font-bold bg-linear-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent dark:from-white dark:to-slate-300">
+              StarterKit
+            </span>
           </Link>
 
           <nav className="hidden items-center gap-8 md:flex">
-            <a href="#features" className="text-sm font-medium text-gray-600 transition hover:text-brand-500 dark:text-gray-300 dark:hover:text-white">
-              Fonctionnalités
-            </a>
-            <a href="#process" className="text-sm font-medium text-gray-600 transition hover:text-brand-500 dark:text-gray-300 dark:hover:text-white">
-              Méthode
-            </a>
-            <a href="#proof" className="text-sm font-medium text-gray-600 transition hover:text-brand-500 dark:text-gray-300 dark:hover:text-white">
-              Preuves
-            </a>
+            {["Fonctionnalités", "Méthode", "Témoignages"].map((item) => (
+              <a
+                key={item}
+                href={`#${item.toLowerCase()}`}
+                className="relative text-sm font-medium text-slate-600 transition-colors hover:text-brand-600 dark:text-slate-300 dark:hover:text-brand-400 group"
+              >
+                {item}
+                <span className="absolute -bottom-1 left-0 h-0.5 w-0 bg-brand-500 transition-all group-hover:w-full"></span>
+              </a>
+            ))}
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <ThemeToggleButton />
             <Link
               href="/signin"
-              className="hidden rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100 dark:border-gray-800 dark:text-gray-300 dark:hover:bg-gray-800 sm:inline-flex"
+              className="hidden rounded-full px-5 py-2 text-sm font-medium text-slate-700 transition-all hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800 sm:inline-block"
             >
-              Se connecter
+              Connexion
             </Link>
             <Link
-              href="/dashboard"
-              className="inline-flex items-center rounded-full bg-brand-500 px-4 py-2 text-sm font-semibold text-white shadow-theme-sm transition hover:bg-brand-600"
+              href="/signup"
+              className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-linear-to-r from-brand-600 to-brand-500 px-5 py-2 text-sm font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-lg"
             >
-              Ouvrir le dashboard
+              <span className="relative z-10">Commencer</span>
+              <div className="absolute inset-0 -translate-x-full bg-linear-to-r from-brand-500 to-brand-600 transition-transform duration-300 group-hover:translate-x-0"></div>
             </Link>
           </div>
         </div>
       </header>
 
-      <main>
+      <main className="relative">
+        {/* Hero Section améliorée */}
         <section className="relative overflow-hidden">
+          {/* Background animé */}
           <div className="absolute inset-0 -z-10">
-            <div className="absolute left-1/2 top-0 h-80 w-80 -translate-x-1/2 rounded-full bg-brand-500/15 blur-3xl" />
-            <div className="absolute right-0 top-24 h-72 w-72 rounded-full bg-blue-light-400/20 blur-3xl" />
-            <div className="absolute bottom-0 left-0 h-72 w-72 rounded-full bg-orange-400/10 blur-3xl" />
+            <div className="absolute left-1/2 top-0 h-[500px] w-[500px] -translate-x-1/2 rounded-full bg-linear-to-r from-brand-500/20 to-purple-500/20 blur-3xl" />
+            <div className="absolute bottom-0 right-0 h-96 w-96 rounded-full bg-blue-500/10 blur-3xl" />
+            <div className="absolute left-0 top-1/3 h-96 w-96 rounded-full bg-emerald-500/10 blur-3xl" />
           </div>
 
-          <div className="mx-auto grid w-full max-w-7xl gap-14 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:px-8 lg:py-28">
-            <div className="flex flex-col justify-center">
-              <div className="mb-6 inline-flex w-fit items-center gap-2 rounded-full border border-brand-100 bg-brand-50 px-4 py-2 text-sm font-medium text-brand-700 dark:border-brand-500/20 dark:bg-brand-500/10 dark:text-brand-300">
-                <span className="h-2 w-2 rounded-full bg-success-500" />
-                Starter kit dashboard premium
-              </div>
+          <div className="mx-auto max-w-7xl px-6 py-24 lg:px-8 lg:py-32">
+            <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
+              <div className="flex flex-col justify-center">
+                <div className="mb-6 inline-flex w-fit animate-in fade-in slide-in-from-bottom-4 duration-700">
+                  <div className="rounded-full border border-brand-200/30 bg-brand-50/80 px-4 py-1.5 text-sm font-medium text-brand-700 backdrop-blur-sm dark:border-brand-500/20 dark:bg-brand-500/10 dark:text-brand-300">
+                    🚀 Launch votre projet en 2024
+                  </div>
+                </div>
 
-              <h1 className="max-w-2xl text-4xl font-semibold tracking-tight text-gray-900 dark:text-white sm:text-5xl xl:text-6xl">
-                Une landing page élégante pour lancer ton dashboard en toute confiance.
-              </h1>
+                <h1 className="animate-in fade-in slide-in-from-bottom-5 duration-700 text-5xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-6xl lg:text-7xl">
+                  Construisez des{" "}
+                  <span className="bg-linear-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent">
+                    dashboards
+                  </span>{" "}
+                  modernes
+                </h1>
 
-              <p className="mt-6 max-w-xl text-lg leading-8 text-gray-600 dark:text-gray-300">
-                Ce starter kit t’offre une base moderne avec une architecture propre, des composants réutilisables et une expérience visuelle qui donne tout de suite envie de cliquer.
-              </p>
+                <p className="mt-6 animate-in fade-in slide-in-from-bottom-6 duration-700 delay-100 text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+                  Un starter kit Next.js 14 avec tout ce dont vous avez besoin : composants réutilisables, dark mode intégré, et performances optimales.
+                </p>
 
-              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-                <Link
-                  href="/dashboard"
-                  className="inline-flex items-center justify-center rounded-full bg-brand-500 px-6 py-3.5 text-sm font-semibold text-white shadow-theme-sm transition hover:bg-brand-600"
-                >
-                  Découvrir le dashboard
-                </Link>
-                <Link
-                  href="/signup"
-                  className="inline-flex items-center justify-center rounded-full border border-gray-300 bg-white px-6 py-3.5 text-sm font-semibold text-gray-700 transition hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800"
-                >
-                  Créer un compte
-                </Link>
-              </div>
-
-              <div className="mt-10 grid gap-4 sm:grid-cols-3">
-                {stats.map((stat) => (
-                  <div
-                    key={stat.label}
-                    className="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/3"
+                <div className="mt-8 flex animate-in fade-in slide-in-from-bottom-7 duration-700 delay-200 flex-col gap-4 sm:flex-row">
+                  <Link
+                    href="/signup"
+                    className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-linear-to-r from-brand-600 to-brand-500 px-8 py-3.5 text-sm font-semibold text-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl"
                   >
-                    <div className="text-2xl font-semibold text-gray-900 dark:text-white">{stat.value}</div>
-                    <p className="mt-2 text-sm leading-6 text-gray-500 dark:text-gray-400">{stat.label}</p>
-                  </div>
-                ))}
+                    <span className="relative z-10">Essayer gratuitement</span>
+                    <svg className="relative z-10 ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </Link>
+                  <Link
+                    href="#features"
+                    className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white/50 px-8 py-3.5 text-sm font-semibold text-slate-700 backdrop-blur-sm transition-all hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900/50 dark:text-slate-300 dark:hover:bg-slate-800/50"
+                  >
+                    Voir la démo
+                  </Link>
+                </div>
+
+                <div className="mt-12 grid gap-6 sm:grid-cols-3">
+                  {stats.map((stat, idx) => (
+                    <div
+                      key={stat.label}
+                      className="group animate-in fade-in slide-in-from-bottom-8 duration-700 rounded-2xl border border-slate-200 bg-white/50 p-5 text-center backdrop-blur-sm transition-all hover:scale-105 hover:shadow-lg dark:border-slate-800 dark:bg-slate-900/50"
+                      style={{ animationDelay: `${idx * 100}ms` }}
+                    >
+                      <div className="text-3xl mb-2">{stat.icon}</div>
+                      <div className="text-3xl font-bold text-slate-900 dark:text-white">{stat.value}</div>
+                      <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{stat.label}</p>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
 
-            <div className="relative">
-              <div className="absolute inset-x-8 top-6 h-full rounded-4xl bg-brand-500/10 blur-2xl" />
-
-              <div className="relative overflow-hidden rounded-4xl border border-gray-200 bg-white p-5 shadow-theme-xl dark:border-gray-800 dark:bg-gray-900">
-                <div className="rounded-3xl border border-gray-200 bg-gray-50 p-4 dark:border-gray-800 dark:bg-gray-950/70">
-                  <div className="flex items-center justify-between rounded-2xl bg-white px-4 py-3 shadow-theme-xs dark:bg-gray-900">
-                    <div>
-                      <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Vue du produit</p>
-                      <p className="text-lg font-semibold text-gray-900 dark:text-white">Dashboard overview</p>
-                    </div>
-                    <span className="rounded-full bg-success-50 px-3 py-1 text-xs font-semibold text-success-700 dark:bg-success-500/10 dark:text-success-300">
-                      +18% ce mois-ci
-                    </span>
-                  </div>
-
-                  <div className="mt-4 grid gap-4 sm:grid-cols-2">
-                    <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-theme-xs dark:border-gray-800 dark:bg-gray-900">
-                      <div className="relative aspect-4/3 w-full">
-                        <Image
-                          src="/images/grid-image/image-01.png"
-                          alt="Aperçu du dashboard"
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                      <div className="p-4">
-                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Analytics</p>
-                        <p className="mt-1 font-semibold text-gray-900 dark:text-white">Métriques, graphiques et suivi</p>
-                      </div>
-                    </div>
-
-                    <div className="grid gap-4">
-                      <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-theme-xs dark:border-gray-800 dark:bg-gray-900">
-                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Parcours utilisateur</p>
-                        <div className="mt-3 flex items-end gap-3">
-                          <span className="text-3xl font-semibold text-gray-900 dark:text-white">1,248</span>
-                          <span className="pb-1 text-sm font-medium text-success-600 dark:text-success-400">+32%</span>
+              <div className="relative animate-in fade-in slide-in-from-right-8 duration-1000 lg:block">
+                <div className="relative rounded-3xl bg-linear-to-br from-slate-100 to-slate-200 p-2 shadow-2xl dark:from-slate-800 dark:to-slate-900">
+                  <div className="overflow-hidden rounded-2xl bg-white dark:bg-slate-900">
+                    <Image
+                      src="/images/grid-image/image-01.png"
+                      alt="Dashboard Preview"
+                      width={600}
+                      height={400}
+                      className="h-auto w-full object-cover"
+                    />
+                    <div className="p-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="text-sm font-medium text-brand-600 dark:text-brand-400">Aperçu du Dashboard</div>
+                          <div className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">Analytics Pro</div>
                         </div>
-                        <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">Un point d’entrée clair pour piloter ton produit.</p>
-                      </div>
-
-                      <div className="relative overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-theme-xs dark:border-gray-800 dark:bg-gray-900">
-                        <div className="relative aspect-16/10 w-full">
-                          <Image
-                            src="/images/grid-image/image-04.png"
-                            alt="Interface moderne"
-                            fill
-                            className="object-cover"
-                          />
+                        <div className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700 dark:bg-green-500/20 dark:text-green-400">
+                          +32% ce mois
                         </div>
+                      </div>
+                      <div className="mt-4 h-2 w-full rounded-full bg-slate-100 dark:bg-slate-700">
+                        <div className="h-2 w-3/4 rounded-full bg-linear-to-r from-brand-500 to-brand-600"></div>
                       </div>
                     </div>
                   </div>
-
-                  <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                    {highlights.map((item) => (
-                      <div
-                        key={item}
-                        className="flex items-center gap-3 rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700 shadow-theme-xs dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300"
-                      >
-                        <span className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-50 text-brand-500 dark:bg-brand-500/10 dark:text-brand-300">
-                          ✓
-                        </span>
-                        {item}
-                      </div>
-                    ))}
+                </div>
+                
+                {/* Badge flottant */}
+                <div className="absolute -bottom-4 -left-4 rounded-xl bg-white px-4 py-2 shadow-lg dark:bg-slate-800">
+                  <div className="flex items-center gap-2">
+                    <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></div>
+                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">2,847 utilisateurs actifs</span>
                   </div>
                 </div>
               </div>
@@ -255,108 +232,173 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="features" className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
-          <div className="max-w-2xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-500 dark:text-brand-300">
-              Fonctionnalités
-            </p>
-            <h2 className="mt-3 text-3xl font-semibold text-gray-900 dark:text-white sm:text-4xl">
-              Tout ce qu’il faut pour construire vite, sans sacrifier le style.
+        {/* Features Section améliorée */}
+        <section id="features" className="mx-auto max-w-7xl px-6 py-24 lg:px-8">
+          <div className="text-center">
+            <div className="mb-4 inline-block rounded-full bg-brand-50 px-4 py-1.5 text-sm font-medium text-brand-700 dark:bg-brand-500/10 dark:text-brand-300">
+              Pourquoi nous choisir ?
+            </div>
+            <h2 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-5xl">
+              Des fonctionnalités qui
+              <span className="block bg-linear-to-r from-brand-600 to-purple-600 bg-clip-text text-transparent">
+                accélèrent votre développement
+              </span>
             </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-lg text-slate-600 dark:text-slate-400">
+              Tout ce dont vous avez besoin pour créer des applications professionnelles en un temps record.
+            </p>
           </div>
 
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
-            {features.map((feature) => (
-              <article
+          <div className="mt-16 grid gap-8 md:grid-cols-3">
+            {features.map((feature, idx) => (
+              <div
                 key={feature.title}
-                className="rounded-3xl border border-gray-200 bg-white p-6 shadow-theme-xs dark:border-gray-800 dark:bg-white/3"
+                className="group relative animate-in fade-in slide-in-from-bottom-5 duration-700 rounded-2xl border border-slate-200 bg-white/50 p-8 backdrop-blur-sm transition-all hover:scale-105 hover:shadow-xl dark:border-slate-800 dark:bg-slate-900/50"
+                style={{ animationDelay: `${idx * 100}ms` }}
               >
-                <div className="mb-4 h-12 w-12 rounded-2xl bg-brand-50 dark:bg-brand-500/10" />
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{feature.title}</h3>
-                <p className="mt-3 leading-7 text-gray-600 dark:text-gray-300">{feature.description}</p>
-              </article>
+                <div className="absolute inset-0 rounded-2xl bg-linear-to-br opacity-0 transition-opacity group-hover:opacity-5" />
+                <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-linear-to-r ${feature.linear}`}>
+                  <span className="text-2xl">{feature.icon}</span>
+                </div>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white">{feature.title}</h3>
+                <p className="mt-2 leading-relaxed text-slate-600 dark:text-slate-400">{feature.description}</p>
+              </div>
             ))}
           </div>
         </section>
 
-        <section id="process" className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
-          <div className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
+        {/* Méthode Section */}
+        <section id="method" className="relative mx-auto max-w-7xl px-6 py-24 lg:px-8">
+          <div className="grid gap-16 lg:grid-cols-2 lg:gap-24">
             <div>
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-500 dark:text-brand-300">
-                Méthode
-              </p>
-              <h2 className="mt-3 text-3xl font-semibold text-gray-900 dark:text-white sm:text-4xl">
-                Une base pensée pour t’aider à passer de l’idée au produit.
+              <div className="mb-4 inline-block rounded-full bg-brand-50 px-4 py-1.5 text-sm font-medium text-brand-700 dark:bg-brand-500/10 dark:text-brand-300">
+                Comment ça marche ?
+              </div>
+              <h2 className="text-4xl font-bold tracking-tight text-slate-900 dark:text-white">
+                Trois étapes pour
+                <span className="block text-brand-600">lancer votre projet</span>
               </h2>
-              <p className="mt-4 max-w-2xl text-lg leading-8 text-gray-600 dark:text-gray-300">
-                Les pages sont déjà organisées pour que tu puisses te concentrer sur ton métier : ajoute des données, connecte ton backend et lance ton interface.
+              <p className="mt-4 text-lg text-slate-600 dark:text-slate-400">
+                Une méthode simple et efficace pour passer de l&apos;idée à la production.
               </p>
 
-              <div className="mt-8 space-y-4">
-                {steps.map((step) => (
+              <div className="mt-8 space-y-6">
+                {steps.map((step, idx) => (
                   <div
-                    key={step.title}
-                    className="rounded-2xl border border-gray-200 bg-white p-5 shadow-theme-xs dark:border-gray-800 dark:bg-white/3"
+                    key={idx}
+                    className="group flex items-start gap-6 rounded-2xl border border-slate-200 bg-white/50 p-6 transition-all hover:shadow-lg dark:border-slate-800 dark:bg-slate-900/50"
                   >
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{step.title}</h3>
-                    <p className="mt-2 leading-7 text-gray-600 dark:text-gray-300">{step.description}</p>
+                    <div className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl ${step.color} text-2xl font-bold text-white`}>
+                      {step.number}
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-slate-900 dark:text-white">{step.title}</h3>
+                      <p className="mt-2 text-slate-600 dark:text-slate-400">{step.description}</p>
+                    </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div id="proof" className="rounded-4xl border border-gray-200 bg-gray-900 p-6 text-white shadow-theme-xl dark:border-gray-800">
-              <p className="text-sm font-semibold uppercase tracking-[0.24em] text-brand-300">Preuves</p>
-              <h3 className="mt-3 text-2xl font-semibold">Le genre de base qui rassure dès la première visite.</h3>
-
-              <div className="mt-6 grid gap-4">
-                {testimonials.map((item) => (
-                  <div key={item.author} className="rounded-2xl border border-white/10 bg-white/5 p-5">
-                    <p className="text-sm leading-7 text-gray-200">“{item.quote}”</p>
-                    <p className="mt-4 text-sm font-semibold text-white">{item.author}</p>
+            <div className="relative">
+              <div className="rounded-3xl bg-linear-to-br from-brand-600 to-purple-600 p-6 text-white shadow-2xl">
+                <div className="mb-6 flex items-center gap-3">
+                  <div className="flex gap-1">
+                    <div className="h-3 w-3 rounded-full bg-red-500"></div>
+                    <div className="h-3 w-3 rounded-full bg-yellow-500"></div>
+                    <div className="h-3 w-3 rounded-full bg-green-500"></div>
                   </div>
-                ))}
+                  <span className="text-sm opacity-80">terminal@starterkit</span>
+                </div>
+                <div className="space-y-2 font-mono text-sm">
+                  <p>$ git clone https://github.com/starterkit/dashboard</p>
+                  <p>$ cd dashboard && npm install</p>
+                  <p>$ npm run dev</p>
+                  <p className="animate-pulse text-green-400">✓ Application démarrée sur http://localhost:3000</p>
+                </div>
               </div>
 
-              <div className="mt-6 rounded-2xl bg-brand-500/15 p-5">
-                <p className="text-sm font-medium text-brand-200">Tu veux aller plus vite ?</p>
-                <p className="mt-2 text-sm leading-7 text-gray-200">
-                  Commence par la page dashboard, puis remplace progressivement les blocs par tes propres données.
-                </p>
-                <Link
-                  href="/dashboard"
-                  className="mt-4 inline-flex rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900 transition hover:bg-gray-100"
+              {testimonials.map((testimonial, idx) => (
+                <div
+                  key={idx}
+                  className="mt-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-lg dark:border-slate-800 dark:bg-slate-900"
                 >
-                  Aller au dashboard
-                </Link>
-              </div>
+                  <div className="flex items-start gap-4">
+                    <div className="h-12 w-12 overflow-hidden rounded-full bg-linear-to-br from-brand-500 to-purple-500">
+                      {/* Avatar placeholder */}
+                    </div>
+                    <div>
+                      <div className="text-lg font-bold text-slate-900 dark:text-white">{testimonial.author}</div>
+                      <div className="text-sm text-brand-600 dark:text-brand-400">{testimonial.role}</div>
+                    </div>
+                  </div>
+                  <p className="mt-4 text-slate-600 dark:text-slate-400">{testimonial.quote}</p>
+                </div>
+              ))}
             </div>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-gray-200 bg-white/80 dark:border-gray-800 dark:bg-gray-950/80">
-        <div className="mx-auto grid w-full max-w-7xl gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1.2fr_0.8fr] lg:px-8">
-          <div>
-            <Link href="/" className="inline-flex items-center gap-3">
-              <Image src="/images/logo/logo.svg" alt="Starter kit dashboard" width={132} height={32} className="dark:hidden" />
-              <Image src="/images/logo/logo-dark.svg" alt="Starter kit dashboard" width={132} height={32} className="hidden dark:block" />
-            </Link>
-            <p className="mt-4 max-w-xl text-sm leading-7 text-gray-600 dark:text-gray-400">
-              Une landing page moderne pour présenter ton starter kit et guider l’utilisateur vers le dashboard, la création de compte ou la connexion.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:justify-items-end">
-            {footerLinks.map((link) => (
-              <Link
-                key={link.label}
-                href={link.href}
-                className="text-sm font-medium text-gray-600 transition hover:text-brand-500 dark:text-gray-400 dark:hover:text-white"
-              >
-                {link.label}
+      {/* Footer amélioré */}
+      <footer className="border-t border-slate-200 bg-white/80 dark:border-slate-800 dark:bg-slate-900/80">
+        <div className="mx-auto max-w-7xl px-6 py-12 lg:px-8">
+          <div className="grid gap-8 md:grid-cols-4">
+            <div className="col-span-1">
+              <Link href="/" className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-xl bg-linear-to-br from-brand-500 to-brand-600"></div>
+                <span className="text-lg font-bold text-slate-900 dark:text-white">StarterKit</span>
               </Link>
-            ))}
+              <p className="mt-4 text-sm text-slate-600 dark:text-slate-400">
+                Le starter kit moderne pour vos applications Next.js.
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold text-slate-900 dark:text-white">Produit</h4>
+              <ul className="mt-4 space-y-2">
+                {footerLinks.slice(0, 3).map((link) => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="text-sm text-slate-600 transition-colors hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold text-slate-900 dark:text-white">Ressources</h4>
+              <ul className="mt-4 space-y-2">
+                {footerLinks.slice(3, 6).map((link) => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="text-sm text-slate-600 transition-colors hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            
+            <div>
+              <h4 className="font-semibold text-slate-900 dark:text-white">Légal</h4>
+              <ul className="mt-4 space-y-2">
+                <li>
+                  <Link href="/privacy" className="text-sm text-slate-600 transition-colors hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400">
+                    Confidentialité
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/terms" className="text-sm text-slate-600 transition-colors hover:text-brand-600 dark:text-slate-400 dark:hover:text-brand-400">
+                    Conditions
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="mt-12 border-t border-slate-200 pt-8 text-center text-sm text-slate-600 dark:border-slate-800 dark:text-slate-400">
+            <p>© 2024 StarterKit. Tous droits réservés.</p>
           </div>
         </div>
       </footer>
