@@ -32,7 +32,7 @@ Starter Kit provides essential UI components and layouts for building feature-ri
 
 ### Other Versions
 
-- [Next.js Version](https://github.com/Starter Kit/free-nextjs-admin-dashboard)
+- [Next.js Version](https://github.com/Starter Kit/nextjs-blueprints)
 - [React.js Version](https://github.com/Starter Kit/free-react-tailwind-admin-dashboard)
 - [Vue.js Version](https://github.com/Starter Kit/vue-tailwind-admin-dashboard)
 - [Angular Version](https://github.com/Starter Kit/free-angular-tailwind-dashboard)
@@ -51,7 +51,7 @@ To get started with Starter Kit, ensure you have the following prerequisites ins
 Clone the repository using the following command:
 
 ```bash
-git clone https://github.com/Starter Kit/free-nextjs-admin-dashboard.git
+git clone https://github.com/Starter Kit/nextjs-blueprints.git
 ```
 
 > Windows Users: place the repository near the root of your drive if you face issues while cloning.
