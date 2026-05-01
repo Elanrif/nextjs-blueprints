@@ -23,11 +23,9 @@ const config: Config = {
         card: "rgb(var(--card) / <alpha-value>)",
         "card-foreground": "rgb(var(--card-foreground) / <alpha-value>)",
         popover: "rgb(var(--popover) / <alpha-value>)",
-        "popover-foreground":
-          "rgb(var(--popover-foreground) / <alpha-value>)",
+        "popover-foreground": "rgb(var(--popover-foreground) / <alpha-value>)",
         primary: "rgb(var(--primary) / <alpha-value>)",
-        "primary-foreground":
-          "rgb(var(--primary-foreground) / <alpha-value>)",
+        "primary-foreground": "rgb(var(--primary-foreground) / <alpha-value>)",
         secondary: "rgb(var(--secondary) / <alpha-value>)",
         "secondary-foreground":
           "rgb(var(--secondary-foreground) / <alpha-value>)",
