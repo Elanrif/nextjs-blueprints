@@ -5,8 +5,6 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 import { getSortingStateParser } from "@/lib/parsers";
 import { columns } from "./columns";
-import { DataTable } from "@/lib/_/components/ui/table/data-table";
-import { DataTableToolbar } from "@/lib/_/components/ui/table/data-table-toolbar";
 import { usersQueryOptions } from "../../api/queries/queries.client";
 
 const columnIds = columns.map((c) => c.id).filter(Boolean) as string[];
@@ -55,23 +53,6 @@ export function UsersTable() {
 
   return (
     <>
-      {/* <pre className="p-2 text-xs">
-        {JSON.stringify(
-          { meta: usersResponse.meta, data: usersResponse.data },
-          null,
-          2,
-        )}
-      </pre>
-      <pre className="p-2 text-xs">
-        {`table.getRowModel().rows.length: ${table.getRowModel().rows.length}`}
-      </pre>
-      <pre className="p-2 text-xs">
-        {JSON.stringify(
-          table.getRowModel().rows.map((r) => r.original),
-          null,
-          2,
-        )}
-      </pre> */}
       <DataTable table={table}>
         <DataTableToolbar table={table} />
       </DataTable>
