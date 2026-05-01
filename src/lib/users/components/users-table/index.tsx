@@ -66,7 +66,7 @@ export function UsersTable({ columns = defaultColumns }: UsersTableProps) {
   // Récupération des données
   const { data, isLoading, error } = useQuery({
     ...usersQueryOptions({
-      page: pagination.pageIndex + 1,
+      page: pagination.pageIndex,
       limit: pagination.pageSize,
       search: columnFilters.find((f) => f.id === "name")?.value as string,
     }),
