@@ -73,6 +73,5 @@ export interface UserMutationPayload {
   lastName: string;
   phoneNumber: string;
   password: string;
-  confirmPassword: string;
   avatarUrl?: string;
 }

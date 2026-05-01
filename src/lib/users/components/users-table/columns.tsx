@@ -1,19 +1,54 @@
+// components/users/columns.tsx
+// Définition des colonnes du tableau TanStack Table
+// Utilise shadcn/ui (Button, Badge, Checkbox)
+
 "use client";
-import type { User } from "../../api/types";
-import { Column, ColumnDef } from "@tanstack/react-table";
-import { CellAction } from "./cell-action";
-import { ROLE_OPTIONS } from "./options";
-import { DataTableColumnHeader } from "@/lib/_/components/ui/table/data-table-column-header";
+
+import { type ColumnDef } from "@tanstack/react-table";
+import { ArrowUpDown } from "lucide-react";
 import { Badge } from "@/lib/_/components/ui/badge";
-import { Icons } from "@/lib/_/components/icons";
+import { Checkbox } from "@/lib/_/components/ui/checkbox";
+import { CellAction } from "./cell-action";
+import { User } from "../../api/types";
+import { Button } from "@/lib/_/components/ui/button";
 
 export const columns: ColumnDef<User>[] = [
+  // Colonne de sélection (checkbox)
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={table.getIsAllPageRowsSelected()}
+        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+        aria-label="Select all"
+      />
+    ),
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  // Colonne Nom complet (avec tri)
   {
     id: "name",
     accessorFn: (row) => `${row.firstName} ${row.lastName}`,
-    header: ({ column }: { column: Column<User, unknown> }) => (
-      <DataTableColumnHeader column={column} title="Name" />
-    ),
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="p-0 hover:bg-transparent"
+        >
+          Name
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => (
       <div className="flex flex-col">
         <span className="font-medium">
@@ -24,44 +59,43 @@ export const columns: ColumnDef<User>[] = [
         </span>
       </div>
     ),
-    meta: {
-      label: "Name",
-      placeholder: "Search users...",
-      variant: "text" as const,
-      icon: Icons.text,
-    },
-    enableColumnFilter: true,
   },
+  // Téléphone
   {
     accessorKey: "phoneNumber",
-    header: "PHONE",
+    header: "Phone",
+    cell: ({ row }) => <div>{row.getValue("phoneNumber")}</div>,
   },
+  // Rôle (avec badge)
   {
-    id: "role",
     accessorKey: "role",
-    enableSorting: false,
-    header: ({ column }: { column: Column<User, unknown> }) => (
-      <DataTableColumnHeader column={column} title="Role" />
-    ),
-    cell: ({ cell }) => {
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="p-0 hover:bg-transparent"
+        >
+          Role
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const role = row.getValue("role") as string;
       return (
         <Badge variant="outline" className="capitalize">
-          {cell.getValue<User["role"]>()}
+          {role}
         </Badge>
       );
     },
-    enableColumnFilter: true,
-    meta: {
-      label: "roles",
-      variant: "multiSelect" as const,
-      options: ROLE_OPTIONS,
-    },
   },
+  // Statut (actif/inactif)
   {
     accessorKey: "isActive",
-    header: "STATUS",
-    cell: ({ cell }) => {
-      const isActive = cell.getValue<User["isActive"]>();
+    header: "Status",
+    cell: ({ row }) => {
+      const isActive = row.getValue("isActive") as boolean;
       return (
         <Badge variant={isActive ? "default" : "secondary"}>
           {isActive ? "Active" : "Inactive"}
@@ -69,6 +103,7 @@ export const columns: ColumnDef<User>[] = [
       );
     },
   },
+  // Actions (modifier/supprimer)
   {
     id: "actions",
     cell: ({ row }) => <CellAction data={row.original} />,

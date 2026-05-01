@@ -4,7 +4,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { notFound } from "next/navigation";
 import { User } from "../api/types";
 import { userByIdOptions } from "../api/queries/queries.client";
-import UserForm from "./user-form";
+import { UserForm } from "./user-form";
 
 type TUserViewPageProps = {
   userId: string;

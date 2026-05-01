@@ -1,211 +1,267 @@
+// components/users/UserForm.tsx
+// Formulaire de création/édition d'utilisateur
+// Utilise react-hook-form + zod pour la validation
+// Compatible avec shadcn/ui (Card, Input, Button, Select)
+
 "use client";
 
-import { IconEye, IconEyeOff } from "@tabler/icons-react";
-import { useAppForm, useFormFields } from "@/lib/_/components/ui/tanstack-form";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+
+// shadcn/ui components
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "@/lib/_/components/ui/card";
-import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import * as z from "zod";
-import type { User } from "../api/types";
-import { UserFormValues, userSchema } from "../schemas/user";
-import { createUserMutation, updateUserMutation } from "../api/mutations";
+import { Input } from "@/lib/_/components/ui/input";
 import { Button } from "@/lib/_/components/ui/button";
-import { userOptions } from "../constants/user-options";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/lib/_/components/ui/select";
 
-export default function UserForm({
-  initialData,
-  pageTitle,
-}: {
+import { userSchema, type UserFormValues } from "../schemas/user";
+import { User, UserRole } from "../api/types";
+import { userOptions } from "../constants/user-options";
+import { createUserMutation, updateUserMutation } from "../api/mutations";
+
+interface UserFormProps {
   initialData: User | null;
   pageTitle: string;
-}) {
+}
+
+export function UserForm({ initialData, pageTitle }: UserFormProps) {
   const router = useRouter();
   const isEdit = !!initialData;
 
+  // react-hook-form avec validation Zod
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    formState: { errors, isSubmitting },
+  } = useForm<UserFormValues>({
+    resolver: zodResolver(userSchema),
+    defaultValues: {
+      firstName: initialData?.firstName ?? "",
+      lastName: initialData?.lastName ?? "",
+      email: initialData?.email ?? "",
+      phoneNumber: initialData?.phoneNumber ?? "",
+      role: initialData?.role ?? UserRole.USER,
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  // Synchroniser le select avec react-hook-form
+  useEffect(() => {
+    if (initialData?.role) {
+      setValue("role", initialData.role);
+    }
+  }, [initialData, setValue]);
+
+  // Mutation création
   const createMutation = useMutation({
     ...createUserMutation,
     onSuccess: (result) => {
       if (!result.ok) {
-        toast.error(result.error.detail || "Failed to create user");
+        toast.error(result.error?.detail || "Failed to create user");
         return;
       }
       toast.success("User created successfully");
       router.push("/users");
+      router.refresh();
     },
     onError: () => {
       toast.error("Failed to create user");
     },
   });
 
+  // Mutation modification
   const updateMutation = useMutation({
     ...updateUserMutation,
     onSuccess: (result) => {
       if (!result.ok) {
-        toast.error(result.error.detail || "Failed to update user");
+        toast.error(result.error?.detail || "Failed to update user");
         return;
       }
       toast.success("User updated successfully");
       router.push("/users");
+      router.refresh();
     },
     onError: () => {
       toast.error("Failed to update user");
     },
   });
 
-  const form = useAppForm({
-    defaultValues: {
-      firstName: initialData?.firstName ?? "",
-      lastName: initialData?.lastName ?? "",
-      email: initialData?.email ?? "",
-      phoneNumber: initialData?.phoneNumber ?? "",
-      role: initialData
-        ? userOptions.find((o) => o.value === initialData.role)?.value
-        : undefined,
-      password: "",
-      confirmPassword: "",
-    } as UserFormValues,
-    validators: {
-      onSubmit: userSchema,
-    },
-    onSubmit: ({ value }) => {
-      if (isEdit) {
-        updateMutation.mutate({ id: initialData!.id, values: value });
-      } else {
-        createMutation.mutate(value);
-      }
-    },
-  });
+  const onSubmit = (values: UserFormValues) => {
+    const { confirmPassword: _confirmPassword, ...submitData } = values;
 
-  const { FormTextField, FormSelectField } = useFormFields<UserFormValues>();
+    if (isEdit && initialData) {
+      updateMutation.mutate({ id: initialData.id, values: submitData });
+    } else {
+      createMutation.mutate(submitData);
+    }
+  };
 
   return (
-    <Card className="mx-auto w-full">
+    <Card className="mx-auto w-full max-w-4xl">
       <CardHeader>
-        <CardTitle className="text-left text-2xl font-bold">
-          {pageTitle}
-        </CardTitle>
+        <CardTitle className="text-2xl font-bold">{pageTitle}</CardTitle>
       </CardHeader>
       <CardContent>
-        <form.AppForm>
-          <form.Form className="space-y-8">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <FormTextField
-                name="firstName"
-                label="First Name"
-                required
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {/* Prénom */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">First Name *</label>
+              <Input
+                {...register("firstName")}
                 placeholder="Enter first name"
-                validators={{
-                  onBlur: z
-                    .string()
-                    .min(2, "First name must be at least 2 characters"),
-                }}
+                className={errors.firstName ? "border-red-500" : ""}
               />
+              {errors.firstName && (
+                <p className="text-sm text-red-500">
+                  {errors.firstName.message}
+                </p>
+              )}
+            </div>
 
-              <FormTextField
-                name="lastName"
-                label="Last Name"
-                required
+            {/* Nom */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Last Name *</label>
+              <Input
+                {...register("lastName")}
                 placeholder="Enter last name"
-                validators={{
-                  onBlur: z
-                    .string()
-                    .min(2, "Last name must be at least 2 characters"),
-                }}
+                className={errors.lastName ? "border-red-500" : ""}
               />
+              {errors.lastName && (
+                <p className="text-sm text-red-500">
+                  {errors.lastName.message}
+                </p>
+              )}
+            </div>
 
-              <FormTextField
-                name="email"
-                label="Email"
-                required
+            {/* Email */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Email *</label>
+              <Input
                 type="email"
-                placeholder="Enter email address"
-                validators={{
-                  onBlur: z.string().email("Please enter a valid email"),
-                }}
+                {...register("email")}
+                placeholder="Enter email"
+                className={errors.email ? "border-red-500" : ""}
               />
+              {errors.email && (
+                <p className="text-sm text-red-500">{errors.email.message}</p>
+              )}
+            </div>
 
-              <FormTextField
-                name="phoneNumber"
-                label="Phone Number"
-                required
-                type="tel"
+            {/* Téléphone */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Phone Number *</label>
+              <Input
+                {...register("phoneNumber")}
                 placeholder="Enter phone number"
-                validators={{
-                  onBlur: z
-                    .string()
-                    .min(10, "Phone number must be at least 10 characters"),
-                }}
+                className={errors.phoneNumber ? "border-red-500" : ""}
               />
-
-              <FormSelectField
-                name="role"
-                label="Role"
-                required
-                options={userOptions}
-                placeholder="Select role"
-                parseValue={Number}
-                validators={{
-                  onBlur: z.number().int().min(1, "Please select a role"),
-                }}
-              />
-
-              <FormTextField
-                name="password"
-                label="Password"
-                required
-                type="password"
-                showPasswordToggle
-                passwordToggleIcons={{
-                  show: <IconEye className="h-4 w-4" />,
-                  hide: <IconEyeOff className="h-4 w-4" />,
-                }}
-                placeholder="Enter password"
-                validators={{
-                  onBlur: z
-                    .string()
-                    .min(8, "Password must be at least 8 characters"),
-                }}
-              />
-
-              <FormTextField
-                name="confirmPassword"
-                label="Confirm Password"
-                required
-                type="password"
-                showPasswordToggle
-                passwordToggleIcons={{
-                  show: <IconEye className="h-4 w-4" />,
-                  hide: <IconEyeOff className="h-4 w-4" />,
-                }}
-                placeholder="Confirm password"
-                validators={{
-                  onBlur: z
-                    .string()
-                    .min(8, "Password must be at least 8 characters"),
-                }}
-              />
+              {errors.phoneNumber && (
+                <p className="text-sm text-red-500">
+                  {errors.phoneNumber.message}
+                </p>
+              )}
             </div>
 
-            <div className="flex justify-end gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => router.back()}
+            {/* Rôle */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Role *</label>
+              <Select
+                onValueChange={(value) => setValue("role", value as UserRole)}
+                defaultValue={initialData?.role?.toString()}
               >
-                Back
-              </Button>
-              <form.SubmitButton>
-                {isEdit ? "Update user" : "Add user"}
-              </form.SubmitButton>
+                <SelectTrigger className={errors.role ? "border-red-500" : ""}>
+                  <SelectValue placeholder="Select a role" />
+                </SelectTrigger>
+                <SelectContent>
+                  {userOptions.map((option) => (
+                    <SelectItem
+                      key={option.value}
+                      value={option.value.toString()}
+                    >
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {errors.role && (
+                <p className="text-sm text-red-500">{errors.role.message}</p>
+              )}
             </div>
-          </form.Form>
-        </form.AppForm>
+
+            {/* Mot de passe (uniquement en création) */}
+            {!isEdit && (
+              <>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">Password *</label>
+                  <Input
+                    type="password"
+                    {...register("password")}
+                    placeholder="Enter password"
+                    className={errors.password ? "border-red-500" : ""}
+                  />
+                  {errors.password && (
+                    <p className="text-sm text-red-500">
+                      {errors.password.message}
+                    </p>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium">
+                    Confirm Password *
+                  </label>
+                  <Input
+                    type="password"
+                    {...register("confirmPassword")}
+                    placeholder="Confirm password"
+                    className={errors.confirmPassword ? "border-red-500" : ""}
+                  />
+                  {errors.confirmPassword && (
+                    <p className="text-sm text-red-500">
+                      {errors.confirmPassword.message}
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Boutons d'action */}
+          <div className="flex justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.back()}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting
+                ? "Saving..."
+                : (isEdit
+                  ? "Update User"
+                  : "Create User")}
+            </Button>
+          </div>
+        </form>
       </CardContent>
     </Card>
   );
