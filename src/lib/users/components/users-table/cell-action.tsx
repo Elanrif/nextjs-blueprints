@@ -10,14 +10,14 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { MoreHorizontal, Edit, Trash } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@/lib/_/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@/lib/_/components/ui/dropdown-menu";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,7 +27,7 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
+} from "@/lib/_/components/ui/alert-dialog";
 import { User } from "../../api/types";
 import { deleteUserMutation } from "../../api/mutations";
 
