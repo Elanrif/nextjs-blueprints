@@ -11,10 +11,10 @@ import type { User } from "../../api/types";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { UserFormSheet } from "../user-form-sheet";
 import { Button } from "@/lib/_/components/ui/button";
 import { Icons } from "@/lib/_/components/icons";
 import { AlertModal } from "@/lib/_/components/modal/alert-modal";
+import { useRouter } from "next/navigation";
 
 interface CellActionProps {
   data: User;
@@ -22,7 +22,7 @@ interface CellActionProps {
 
 export function CellAction({ data }: CellActionProps) {
   const [deleteOpen, setDeleteOpen] = useState(false);
-  const [editOpen, setEditOpen] = useState(false);
+  const router = useRouter();
 
   const deleteMutation = useMutation({
     ...deleteUserMutation,
@@ -43,7 +43,6 @@ export function CellAction({ data }: CellActionProps) {
         onConfirm={() => deleteMutation.mutate(data.id)}
         loading={deleteMutation.isPending}
       />
-      <UserFormSheet user={data} open={editOpen} onOpenChange={setEditOpen} />
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -53,7 +52,7 @@ export function CellAction({ data }: CellActionProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => setEditOpen(true)}>
+          <DropdownMenuItem onClick={() => router.push(`/users/${data.id}`)}>
             <Icons.edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setDeleteOpen(true)}>

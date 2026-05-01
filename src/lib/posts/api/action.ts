@@ -11,7 +11,7 @@ export async function createPostAction(
 ): Promise<Result<Post, ApiError>> {
   const result = await createPost(data);
   if (result.ok) {
-    revalidatePath("/dashboard/posts");
+    revalidatePath("/users");
   }
   return result;
 }
@@ -22,7 +22,7 @@ export async function updatePostAction(
 ): Promise<Result<Post, ApiError>> {
   const result = await updatePost(id, data);
   if (result.ok) {
-    revalidatePath("/dashboard/posts");
+    revalidatePath("/users");
   }
   return result;
 }
@@ -32,7 +32,7 @@ export async function deletePostAction(
 ): Promise<Result<{ success: boolean }, ApiError>> {
   const result = await deletePost(id);
   if (result.ok) {
-    revalidatePath("/dashboard/posts");
+    revalidatePath("/users");
   }
   return result;
 }

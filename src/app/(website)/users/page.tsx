@@ -1,7 +1,10 @@
+import { Icons } from "@/lib/_/components/icons";
 import PageContainer from "@/lib/_/components/layout/page-container";
+import { buttonVariants } from "@/lib/_/components/ui/button";
 import { searchParamsCache } from "@/lib/searchparams";
-import { UserFormSheetTrigger } from "@/lib/users/components/user-form-sheet";
 import UserListingPage from "@/lib/users/components/user-listing";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
 import type { SearchParams } from "nuqs/server";
 
 export const metadata = {
@@ -20,7 +23,14 @@ export default async function UsersPage(props: PageProps) {
     <PageContainer
       pageTitle="Users"
       pageDescription="Manage users (React Query + nuqs table pattern.)"
-      pageHeaderAction={<UserFormSheetTrigger />}
+      pageHeaderAction={
+        <Link
+          href="/users/new"
+          className={cn(buttonVariants(), "text-xs md:text-sm")}
+        >
+          <Icons.add className="mr-2 h-4 w-4" /> Add New
+        </Link>
+      }
     >
       <UserListingPage />
     </PageContainer>

@@ -17,11 +17,7 @@
  * circular dependencies.
  */
 
-import {
-  createFormHookContexts,
-  
-  useStore,
-} from "@tanstack/react-form";
+import { createFormHookContexts, useStore } from "@tanstack/react-form";
 import type { AnyFieldApi, DeepKeys } from "@tanstack/form-core";
 import type { VariantProps } from "class-variance-authority";
 import * as React from "react";
@@ -138,7 +134,10 @@ function FieldError({ className, ...props }: React.ComponentProps<"p">) {
     <DefaultFieldError
       data-slot="form-message"
       id={formMessageId}
-      className={cn("text-destructive text-sm", className)}
+      className={cn(
+        "text-sm font-medium text-red-500 dark:text-red-400",
+        className,
+      )}
       {...props}
       errors={errors}
     />
@@ -405,7 +404,6 @@ export {
   useFormContext,
   createFormField,
   typedField,
-  
   scrollToFirstError,
   FieldSet as FormFieldSet,
   Field as FormField,
@@ -413,4 +411,4 @@ export {
   FormErrors,
 };
 
-export {revalidateLogic} from "@tanstack/react-form";
+export { revalidateLogic } from "@tanstack/react-form";

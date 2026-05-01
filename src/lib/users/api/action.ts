@@ -11,7 +11,7 @@ export async function createUserAction(
 ): Promise<Result<User, ApiError>> {
   const result = await createUser(data);
   if (result.ok) {
-    revalidatePath("/dashboard/users");
+    revalidatePath("/users");
   }
   return result;
 }
@@ -22,7 +22,7 @@ export async function updateUserAction(
 ): Promise<Result<User, ApiError>> {
   const result = await updateUser(id, data);
   if (result.ok) {
-    revalidatePath("/dashboard/users");
+    revalidatePath("/users");
   }
   return result;
 }
@@ -32,7 +32,7 @@ export async function deleteUserAction(
 ): Promise<Result<{ success: boolean }, ApiError>> {
   const result = await deleteUser(id);
   if (result.ok) {
-    revalidatePath("/dashboard/users");
+    revalidatePath("/users");
   }
   return result;
 }

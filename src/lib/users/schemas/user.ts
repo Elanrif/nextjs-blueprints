@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { UserRole } from "../api/types";
 
 /**
  * Base user schema — shared validation rules
@@ -21,6 +22,7 @@ const UserBaseSchema = z.object({
   email: z
     .email({ message: "Invalid email address" })
     .max(255, "Email must be at most 255 characters"),
+  role: z.nativeEnum(UserRole),
   password: z
     .string()
     .min(8, "Password must be at least 8 characters")

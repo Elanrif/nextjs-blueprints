@@ -5,7 +5,7 @@
  * withForm, and withFieldGroup. See docs/forms.md for full usage guide.
  */
 
-import { createFormHook } from "@tanstack/react-form";
+import { createFormHook, useStore } from "@tanstack/react-form";
 import type { VariantProps } from "class-variance-authority";
 import * as React from "react";
 import { Button, type buttonVariants } from "./button";
@@ -35,7 +35,8 @@ import {
   FormSwitchField,
   FormRadioGroupField,
   FormSliderField,
- FormFileUploadField } from "../forms/fields";
+  FormFileUploadField,
+} from "../forms/fields";
 import { cn } from "@/lib/utils";
 import {
   fieldContext,
@@ -93,23 +94,19 @@ function SubmitButton({
   ...props
 }: React.ComponentProps<"button"> & VariantProps<typeof buttonVariants>) {
   const form = useFormContext();
+  const canSubmit = useStore(form.store, (state) => state.canSubmit);
+  const isSubmitting = useStore(form.store, (state) => state.isSubmitting);
   return (
-    <form.Subscribe
-      selector={(state) => [state.canSubmit, state.isSubmitting] as const}
+    <Button
+      className={className}
+      size={size}
+      type="submit"
+      disabled={!canSubmit}
+      isLoading={isSubmitting}
+      {...props}
     >
-      {([canSubmit, isSubmitting]) => (
-        <Button
-          className={className}
-          size={size}
-          type="submit"
-          disabled={!canSubmit}
-          isLoading={isSubmitting}
-          {...props}
-        >
-          {children}
-        </Button>
-      )}
-    </form.Subscribe>
+      {children}
+    </Button>
   );
 }
 
