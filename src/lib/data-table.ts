@@ -20,14 +20,14 @@ export function getCommonPinningStyles<TData>({
 
   return {
     boxShadow: isLastLeftPinnedColumn
-      ? "-5px 0 5px -5px var(--border) inset"
+      ? "-5px 0 5px -5px rgb(var(--border)) inset"
       : (isFirstRightPinnedColumn
-        ? "5px 0 5px -5px var(--border) inset"
+        ? "5px 0 5px -5px rgb(var(--border)) inset"
         : undefined),
     left: isPinned === "left" ? `${column.getStart("left")}px` : undefined,
     right: isPinned === "right" ? `${column.getAfter("right")}px` : undefined,
     position: isPinned ? "sticky" : "relative",
-    background: isPinned ? "var(--background)" : undefined,
+    background: isPinned ? "rgb(var(--background))" : undefined,
     width: column.getSize(),
     zIndex: isPinned ? 1 : 0,
   };
