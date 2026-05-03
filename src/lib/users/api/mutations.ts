@@ -3,6 +3,7 @@ import { userKeys } from "./queries";
 import { createUser, deleteUser, updateUser } from "./services/user.client";
 import { UserMutationPayload } from "./types";
 import { getQueryClient } from "@/lib/query-client";
+import { postKeys } from "@/lib/posts/api/queries";
 
 export const createUserMutation = mutationOptions({
   mutationFn: (data: UserMutationPayload) => createUser(data),
@@ -14,14 +15,16 @@ export const createUserMutation = mutationOptions({
 export const updateUserMutation = mutationOptions({
   mutationFn: ({ id, values }: { id: number; values: UserMutationPayload }) =>
     updateUser(id, values),
-  onSuccess: () => {
+  onSuccess: (_, {id}) => {
+    getQueryClient().invalidateQueries({ queryKey: userKeys.detail(id) });
     getQueryClient().invalidateQueries({ queryKey: userKeys.all });
   },
 });
 
 export const deleteUserMutation = mutationOptions({
   mutationFn: (id: number) => deleteUser(id),
-  onSuccess: () => {
-    getQueryClient().invalidateQueries({ queryKey: userKeys.all });
+  onSuccess: (_, id) => {
+    getQueryClient().removeQueries({ queryKey: postKeys.detail(id) });
+    getQueryClient().invalidateQueries({ queryKey: postKeys.all });
   },
 });

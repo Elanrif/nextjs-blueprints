@@ -3,10 +3,6 @@ import { searchUsersFilter } from "@/lib/users/api/services/user.server";
 
 export const dynamic = "force-dynamic";
 
-/**
- * GET /api/users/search?email=...&firstName=...&lastName=...&isActive=...
- * Search users with optional filters — proxies to Spring Boot GET /users/search
- */
 export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
 
@@ -21,6 +17,6 @@ export async function GET(request: NextRequest) {
 
   const response = await searchUsersFilter(filters);
   return NextResponse.json(response, {
-    status: 200,
+    status: response.ok ? 200 : response.error.status,
   });
 }

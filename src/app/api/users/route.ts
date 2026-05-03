@@ -4,11 +4,15 @@ import type { UserFilters } from "@/lib/users/api/types";
 
 export const dynamic = "force-dynamic";
 
-/**
- * GET /api/users
- * Fetch all users
- */
 export async function GET(_request: NextRequest) {
+  /**
+   * Issue: API route always returned 200 even when business logic failed.
+   *
+   * ⚠️ Root cause: NextResponse.json() defaults to 200 status.
+   * Even if response.ok === false, the HTTP status remained 200.
+   *
+   * Fix: Check response.ok and return appropriate HTTP status code.
+   */
   const sp =
     _request.nextUrl?.searchParams ?? new URL(_request.url).searchParams;
   const filters: UserFilters = {
@@ -20,7 +24,9 @@ export async function GET(_request: NextRequest) {
   };
 
   const response = await getUsers(filters);
-  return NextResponse.json(response);
+  return NextResponse.json(response, {
+    status: response.ok ? 200 : response.error.status,
+  });
 }
 
 /**
@@ -30,5 +36,7 @@ export async function GET(_request: NextRequest) {
 export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null);
   const response = await createUser(body);
-  return NextResponse.json(response);
+  return NextResponse.json(response, {
+    status: response.ok ? 201 : response.error.status,
+  });
 }

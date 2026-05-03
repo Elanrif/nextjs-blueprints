@@ -104,12 +104,20 @@ export function UserForm({ initialData, pageTitle }: UserFormProps) {
   });
 
   const onSubmit = (values: UserFormValues) => {
-    const { confirmPassword: _confirmPassword, ...submitData } = values;
+    const payload = {
+      firstName: values.firstName,
+      lastName: values.lastName,
+      email: values.email,
+      phoneNumber: values.phoneNumber,
+      role: values.role,
+      password: values.password || "",
+      confirmPassword: values.confirmPassword || "",
+    };
 
-    if (isEdit && initialData) {
-      updateMutation.mutate({ id: initialData.id, values: submitData });
+    if (isEdit) {
+      updateMutation.mutate({ id: initialData.id, values: payload });
     } else {
-      createMutation.mutate(submitData);
+      createMutation.mutate(payload);
     }
   };
 
@@ -185,7 +193,9 @@ export function UserForm({ initialData, pageTitle }: UserFormProps) {
               <label className="text-sm font-medium">Role *</label>
               <Select
                 onValueChange={(value) => setValue("role", value as UserRole)}
-                defaultValue={initialData?.role?.toString()}
+                defaultValue={
+                  initialData?.role?.toString() ?? UserRole.USER.toString()
+                }
               >
                 <SelectTrigger className={errors.role ? "border-red-500" : ""}>
                   <SelectValue placeholder="Select a role" />

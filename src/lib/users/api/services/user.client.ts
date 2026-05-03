@@ -31,13 +31,21 @@ const {
 export async function fetchUsers(
   filters: UserFilters,
 ): Promise<Result<UsersResponse, ApiError>> {
-  const queryParams = new URLSearchParams(
-    filters as Record<string, string>,
-  ).toString();
+  // 🔥 Clean undefined params
+  const cleanParams: Record<string, string> = {};
+
+  for (const [key, value] of Object.entries(filters)) {
+    if (value !== undefined && value !== null && value !== "") {
+      cleanParams[key] = String(value);
+    }
+  }
+  const queryParams = new URLSearchParams(cleanParams).toString();
+  const url = `${usersUrl}${queryParams ? `?${queryParams}` : ""}`;
+
   const res = await frontendHttp().get<
     unknown,
     AxiosResponse<Result<UsersResponse, ApiError>>
-  >(`${usersUrl}?${queryParams}`);
+  >(url);
   return res.data;
 }
 

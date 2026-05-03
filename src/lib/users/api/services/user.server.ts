@@ -39,13 +39,19 @@ export async function getUsers(
   filters: UserFilters,
 ): Promise<Result<UsersResponse, ApiError>> {
   try {
-    const queryParams = new URLSearchParams(
-      filters as Record<string, string>,
-    ).toString();
-    const res = await apiClient(true).get<UsersResponse>(
-      `${usersUrl}?${queryParams}`,
-    );
-    logger.info({ count: res.data.meta.total }, "geted users");
+    // 🔥 Clean undefined params
+    const cleanParams: Record<string, string> = {};
+
+    for (const [key, value] of Object.entries(filters)) {
+      if (value !== undefined && value !== null && value !== "") {
+        cleanParams[key] = String(value);
+      }
+    }
+    const queryParams = new URLSearchParams(cleanParams).toString();
+    const url = `${usersUrl}${queryParams ? `?${queryParams}` : ""}`;
+
+    const res = await apiClient(true).get<UsersResponse>(url);
+    logger.info({ count: res.data.meta.total }, "get users");
     return { ok: true, data: res.data };
   } catch (error) {
     logger.error({ context: "getUsers" }, "Error getting users");
@@ -67,6 +73,7 @@ export async function createUser(
    */
   const parse = parseUserCreate(user);
   if (!parse.success) {
+    logger.warn({ context: "createUser", errors: parse.error.message }, "validation failed");
     return {
       ok: false,
       error: badRequestApiError(parse.error.message),
@@ -137,6 +144,10 @@ export async function updateUser(
 
   const parse = parseUserUpdate(user);
   if (!parse.success) {
+    logger.warn(
+      { context: "updateUser", errors: parse.error.message },
+      "validation failed",
+    );
     return {
       ok: false,
       error: badRequestApiError(parse.error.message),

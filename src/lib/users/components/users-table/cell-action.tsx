@@ -53,7 +53,7 @@ export function CellAction({ data }: CellActionProps) {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/posts/${data.id}`)}
+            onClick={() => router.push(`/users/${data.id}`)}
           >
             <Icons.edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
