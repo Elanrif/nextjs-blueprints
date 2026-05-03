@@ -15,6 +15,8 @@ import { toast } from "sonner";
 import { deleteUserMutation } from "../../api/mutations";
 import { Icons } from "@/lib/_/components/icons";
 import { AlertModal } from "@/lib/_/components/modal/alert-modal";
+import type { ApiError } from "@/lib/_/errors/api-error";
+import type { Result } from "@/lib/_/errors/response.model";
 
 interface CellActionProps {
   data: User;
@@ -26,12 +28,14 @@ export function CellAction({ data }: CellActionProps) {
 
   const deleteMutation = useMutation({
     ...deleteUserMutation,
-    onSuccess: () => {
+    onSuccess: (result: Result<{ success: boolean }, ApiError>) => {
+      if (!result.ok) {
+        toast.error(result.error?.detail || "Failed to delete user");
+        return;
+      }
+
       toast.success("User deleted successfully");
       setOpen(false);
-    },
-    onError: () => {
-      toast.error("Failed to delete user");
     },
   });
 
@@ -52,9 +56,7 @@ export function CellAction({ data }: CellActionProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem
-            onClick={() => router.push(`/users/${data.id}`)}
-          >
+          <DropdownMenuItem onClick={() => router.push(`/users/${data.id}`)}>
             <Icons.edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>

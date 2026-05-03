@@ -1,18 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createUser, getUsers } from "@/lib/users/api/services/user.server";
+import { getUsers } from "@/lib/users/api/services/user.server";
 import type { UserFilters } from "@/lib/users/api/types";
 
 export const dynamic = "force-dynamic";
 
 export async function GET(_request: NextRequest) {
-  /**
-   * Issue: API route always returned 200 even when business logic failed.
-   *
-   * ⚠️ Root cause: NextResponse.json() defaults to 200 status.
-   * Even if response.ok === false, the HTTP status remained 200.
-   *
-   * Fix: Check response.ok and return appropriate HTTP status code.
-   */
   const sp =
     _request.nextUrl?.searchParams ?? new URL(_request.url).searchParams;
   const filters: UserFilters = {
@@ -24,19 +16,28 @@ export async function GET(_request: NextRequest) {
   };
 
   const response = await getUsers(filters);
-  return NextResponse.json(response, {
-    status: response.ok ? 200 : response.error.status,
-  });
+  /**
+   * Always return 200 OK (even on business logic errors).
+   * The HTTP status only indicates network/server transport success.
+   * Actual business logic errors (validation, FK violation, etc) are in response.ok:
+   *   - response.ok = true: operation succeeded
+   *   - response.ok = false: operation failed, see response.error for details
+   * This prevents Axios from throwing exceptions for business errors.
+   */
+  return NextResponse.json(response, { status: 200 });
 }
 
 /**
- * POST /api/users
- * Create a new user
+ *  ⚠️Methods below are not used, just an example if we want to call API routes directly,
+ *  from client components without going through server actions.
+ *  ✅We use server actions for mutations to leverage revalidation
+ *  and avoid handling client-side state management (loading, error).
+ * @param user
+ * @returns
  */
-export async function POST(request: NextRequest) {
-  const body = await request.json().catch(() => null);
-  const response = await createUser(body);
-  return NextResponse.json(response, {
-    status: response.ok ? 201 : response.error.status,
-  });
-}
+
+// export async function POST(request: NextRequest) {
+//   const body = await request.json().catch(() => null);
+//   const response = await createUser(body);
+//   return NextResponse.json(response, { status: 200 });
+// }

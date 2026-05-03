@@ -6,14 +6,10 @@ import {
   User,
   UserCreatePayload,
   UserFilters,
-  UserSearchFilter,
   UserUpdatePayload,
   UsersResponse,
 } from "@/lib/users/api/types";
-import {
-  parseUserCreate,
-  parseUserUpdate,
-} from "@lib/users/schemas/user";
+import { parseUserCreate, parseUserUpdate } from "@lib/users/schemas/user";
 import { getLogger } from "@config/logger.config";
 import { ApiErrorResponse } from "@/lib/_/errors/api-error.server";
 import { Result } from "@/lib/_/errors/response.model";
@@ -73,7 +69,10 @@ export async function createUser(
    */
   const parse = parseUserCreate(user);
   if (!parse.success) {
-    logger.warn({ context: "createUser", errors: parse.error.message }, "validation failed");
+    logger.warn(
+      { context: "createUser", errors: parse.error.message },
+      "validation failed",
+    );
     return {
       ok: false,
       error: badRequestApiError(parse.error.message),
@@ -106,31 +105,6 @@ export async function getUserById(id: number): Promise<Result<User, ApiError>> {
     return {
       ok: false,
       error: ApiErrorResponse(error, "getUserById"),
-    };
-  }
-}
-
-export async function searchUsersFilter(
-  filters: UserSearchFilter,
-): Promise<Result<User[], ApiError>> {
-  const params = new URLSearchParams();
-  if (filters.email) params.set("email", filters.email);
-  if (filters.firstName) params.set("firstName", filters.firstName);
-  if (filters.lastName) params.set("lastName", filters.lastName);
-  if (filters.isActive !== undefined)
-    params.set("isActive", String(filters.isActive));
-
-  try {
-    const res = await apiClient(true).get<User[]>(
-      `${usersUrl}/search?${params.toString()}`,
-    );
-    logger.info({ count: res.data.length, filters }, "Users search completed");
-    return { ok: true, data: res.data };
-  } catch (error) {
-    logger.error({ filters }, "Failed to search users");
-    return {
-      ok: false,
-      error: ApiErrorResponse(error, "searchUsersFilter"),
     };
   }
 }

@@ -53,13 +53,6 @@ export interface UserLogin {
   user: User;
 }
 
-export interface UserSearchFilter {
-  email?: string;
-  firstName?: string;
-  lastName?: string;
-  isActive?: boolean;
-}
-
 export interface ResetPassword {
   code: string;
   resetToken: string;

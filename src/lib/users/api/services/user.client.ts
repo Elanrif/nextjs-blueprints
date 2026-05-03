@@ -1,13 +1,6 @@
-import { AxiosError, AxiosResponse } from "axios";
+import { AxiosResponse } from "axios";
 import { proxyEnvironment } from "@config/proxy-api.config";
-import {
-  User,
-  UserSearchFilter,
-  UserFilters,
-  UserCreatePayload,
-  UserUpdatePayload,
-  UsersResponse,
-} from "@lib/users/api/types";
+import { User, UserFilters, UsersResponse } from "@lib/users/api/types";
 import { frontendHttp } from "@config/axios/frontend-http.config";
 import { ApiError } from "@/lib/_/errors/api-error";
 import { Result } from "@/lib/_/errors/response.model";
@@ -64,95 +57,41 @@ export async function fetchUserById(
 }
 
 /**
- * Update a user (client-side)
+ *  ⚠️Methods below are not used, just an example if we want to call API routes directly,
+ *  from client components without going through server actions.
+ *  ✅We use server actions for mutations to leverage revalidation
+ *  and avoid handling client-side state management (loading, error).
+ * @param user
+ * @returns
  */
-export async function updateUser(
-  id: number,
-  user: UserUpdatePayload,
-): Promise<Result<User, ApiError>> {
-  try {
-    const res = await frontendHttp().patch<
-      unknown,
-      AxiosResponse<Result<User, ApiError>>
-    >(`${usersUrl}/${id}`, user);
-    return res.data;
-  } catch (error) {
-    if (error instanceof AxiosError && error.response?.data) {
-      return error.response.data as Result<User, ApiError>;
-    }
 
-    return {
-      ok: false,
-      error: {
-        status: 500,
-        title: "Internal Error",
-        detail: error instanceof Error ? error.message : "Unknown error",
-        instance: undefined,
-        errorCode: "INTERNAL_ERROR",
-      },
-    };
-  }
-}
+// export async function createUser(
+//   user: UserCreatePayload,
+// ): Promise<Result<User, ApiError>> {
+//   const res = await frontendHttp().post<
+//     unknown,
+//     AxiosResponse<Result<User, ApiError>>
+//   >(usersUrl, user);
+//   return res.data;
+// }
 
-/**
- * Create a new user (client-side)
- */
-export async function createUser(
-  user: UserCreatePayload,
-): Promise<Result<User, ApiError>> {
-  try {
-    const res = await frontendHttp().post<
-      unknown,
-      AxiosResponse<Result<User, ApiError>>
-    >(usersUrl, user);
-    return res.data;
-  } catch (error) {
-    if (error instanceof AxiosError && error.response?.data) {
-      return error.response.data as Result<User, ApiError>;
-    }
+// export async function updateUser(
+//   id: number,
+//   user: UserUpdatePayload,
+// ): Promise<Result<User, ApiError>> {
+//   const res = await frontendHttp().patch<
+//     unknown,
+//     AxiosResponse<Result<User, ApiError>>
+//   >(`${usersUrl}/${id}`, user);
+//   return res.data;
+// }
 
-    return {
-      ok: false,
-      error: {
-        status: 500,
-        title: "Internal Error",
-        detail: error instanceof Error ? error.message : "Unknown error",
-        instance: undefined,
-        errorCode: "INTERNAL_ERROR",
-      },
-    };
-  }
-}
-
-/**
- * Delete a user (client-side)
- */
-export async function deleteUser(
-  id: number,
-): Promise<Result<{ success: boolean }, ApiError>> {
-  const res = await frontendHttp().delete<
-    unknown,
-    AxiosResponse<Result<{ success: boolean }, ApiError>>
-  >(`${usersUrl}/${id}`);
-  return res.data;
-}
-
-/**
- * Search users by filters (client-side)
- */
-export async function searchUsersFilter(
-  filters: UserSearchFilter,
-): Promise<Result<User[], ApiError>> {
-  const params = new URLSearchParams();
-  if (filters.email) params.set("email", filters.email);
-  if (filters.firstName) params.set("firstName", filters.firstName);
-  if (filters.lastName) params.set("lastName", filters.lastName);
-  if (filters.isActive !== undefined)
-    params.set("isActive", String(filters.isActive));
-
-  const res = await frontendHttp().get<
-    unknown,
-    AxiosResponse<Result<User[], ApiError>>
-  >(`${usersUrl}/search?${params.toString()}`);
-  return res.data;
-}
+// export async function deleteUser(
+//   id: number,
+// ): Promise<Result<{ success: boolean }, ApiError>> {
+//   const res = await frontendHttp().delete<
+//     unknown,
+//     AxiosResponse<Result<{ success: boolean }, ApiError>>
+//   >(`${usersUrl}/${id}`);
+//   return res.data;
+// }
