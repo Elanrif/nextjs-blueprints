@@ -6,7 +6,7 @@ import { UserRole } from "../api/types";
  * ⚠️ Never trust the client input
  * ❌ Someone can bypass the form
  */
-const UserBaseSchema = z.object({
+export const userBaseSchema = z.object({
   firstName: z
     .string()
     .min(2, "First name must be at least 2 characters")
@@ -23,64 +23,71 @@ const UserBaseSchema = z.object({
     .email({ message: "Invalid email address" })
     .max(255, "Email must be at most 255 characters"),
   role: z.nativeEnum(UserRole),
-  password: z
-    .string()
-    .min(8, "Password must be at least 8 characters")
-    .max(255, "Password must be at most 255 characters"),
-  confirmPassword: z
-    .string()
-    .min(8, "Confirm password must be at least 8 characters")
-    .max(255, "Confirm password must be at most 255 characters"),
 });
+
+const passwordSchema = z
+  .string()
+  .min(8, "Password must be at least 8 characters")
+  .max(255, "Password must be at most 255 characters");
 
 /**
  * Reset password schema with validation
  */
-export const resetPasswordSchema = UserBaseSchema.pick({
-  email: true,
-}).extend({
-  newPassword: UserBaseSchema.shape.password,
-  code: z.string().min(1, "Reset code is required"),
-  resetToken: z.string().min(1, "Reset token is required"),
-});
+export const resetPasswordSchema = userBaseSchema
+  .pick({
+    email: true,
+  })
+  .extend({
+    newPassword: passwordSchema,
+    code: z.string().min(1, "Reset code is required"),
+    resetToken: z.string().min(1, "Reset token is required"),
+  });
 export type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>;
 export const parseResetPassword = resetPasswordSchema.safeParse;
 
 /**
  * User creation schema with password confirmation validation
  */
-export const userSchema = UserBaseSchema.refine(
-  (data) => data.password === data.confirmPassword,
-  {
+export const userCreateSchema = userBaseSchema
+  .extend({
+    password: passwordSchema,
+    confirmPassword: passwordSchema,
+  })
+  .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
-  },
-);
-export type UserFormValues = z.infer<typeof userSchema>;
-export const parseUserCreate = userSchema.safeParse;
+  });
+export type UserFormValues = z.infer<typeof userCreateSchema>;
+export const parseUserCreate = userCreateSchema.safeParse;
 
 /**
  * User update schema — all fields optional with password validation
  */
-export const userUpdateSchema = UserBaseSchema.partial().refine(
-  (data) => {
-    if (data.password !== undefined || data.confirmPassword !== undefined) {
-      if (
-        typeof data.password === "string" &&
-        typeof data.confirmPassword === "string" &&
-        data.password.length >= 8 &&
-        data.confirmPassword.length >= 8
-      ) {
-        return data.password === data.confirmPassword;
+export const userUpdateSchema = userBaseSchema
+  .partial()
+  .extend({
+    password: passwordSchema.optional(),
+    confirmPassword: passwordSchema.optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.password !== undefined || data.confirmPassword !== undefined) {
+        if (
+          typeof data.password === "string" &&
+          typeof data.confirmPassword === "string" &&
+          data.password.length >= 8 &&
+          data.confirmPassword.length >= 8
+        ) {
+          return data.password === data.confirmPassword;
+        }
+        return false;
       }
-      return false;
-    }
-    return true;
-  },
-  {
-    message: "Passwords must match and be at least 8 characters",
-    path: ["confirmPassword"],
-  },
-);
+      return true;
+    },
+    {
+      message: "Passwords must match and be at least 8 characters",
+      path: ["confirmPassword"],
+    },
+  );
 export type UserUpdateFormValues = z.infer<typeof userUpdateSchema>;
 export const parseUserUpdate = userUpdateSchema.safeParse;

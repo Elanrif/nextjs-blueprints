@@ -67,11 +67,26 @@ export interface ResetPassword {
   newPassword: string;
 }
 
-export interface UserMutationPayload {
+export interface UserCreatePayload {
   email: string;
   firstName: string;
   lastName: string;
   phoneNumber: string;
+  role: UserRole;
   password: string;
+  confirmPassword: string;
   avatarUrl?: string;
 }
+
+export interface UserUpdatePayload {
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  role: UserRole;
+  password?: string;
+  confirmPassword?: string;
+  avatarUrl?: string;
+}
+
+export type UserMutationPayload = UserCreatePayload;

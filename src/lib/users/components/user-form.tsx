@@ -5,7 +5,7 @@
 
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -29,8 +29,19 @@ import {
   SelectValue,
 } from "@/lib/_/components/ui/select";
 
-import { userSchema, type UserFormValues } from "../schemas/user";
-import { User, UserRole } from "../api/types";
+import {
+  userCreateSchema,
+  userUpdateSchema,
+  type UserFormValues,
+  type UserUpdateFormValues,
+} from "../schemas/user";
+import { Icons } from "@/lib/_/components/icons";
+import {
+  User,
+  UserRole,
+  type UserCreatePayload,
+  type UserUpdatePayload,
+} from "../api/types";
 import { userOptions } from "../constants/user-options";
 import { createUserMutation, updateUserMutation } from "../api/mutations";
 
@@ -42,6 +53,9 @@ interface UserFormProps {
 export function UserForm({ initialData, pageTitle }: UserFormProps) {
   const router = useRouter();
   const isEdit = !!initialData;
+  const formSchema = isEdit ? userUpdateSchema : userCreateSchema;
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // react-hook-form avec validation Zod
   const {
@@ -49,17 +63,25 @@ export function UserForm({ initialData, pageTitle }: UserFormProps) {
     handleSubmit,
     setValue,
     formState: { errors, isSubmitting },
-  } = useForm<UserFormValues>({
-    resolver: zodResolver(userSchema),
-    defaultValues: {
-      firstName: initialData?.firstName ?? "",
-      lastName: initialData?.lastName ?? "",
-      email: initialData?.email ?? "",
-      phoneNumber: initialData?.phoneNumber ?? "",
-      role: initialData?.role ?? UserRole.USER,
-      password: "",
-      confirmPassword: "",
-    },
+  } = useForm<UserFormValues | UserUpdateFormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: isEdit
+      ? {
+          firstName: initialData?.firstName ?? "",
+          lastName: initialData?.lastName ?? "",
+          email: initialData?.email ?? "",
+          phoneNumber: initialData?.phoneNumber ?? "",
+          role: initialData?.role ?? UserRole.USER,
+        }
+      : {
+          firstName: "",
+          lastName: "",
+          email: "",
+          phoneNumber: "",
+          role: UserRole.USER,
+          password: "",
+          confirmPassword: "",
+        },
   });
 
   // Synchroniser le select avec react-hook-form
@@ -103,20 +125,33 @@ export function UserForm({ initialData, pageTitle }: UserFormProps) {
     },
   });
 
-  const onSubmit = (values: UserFormValues) => {
-    const payload = {
-      firstName: values.firstName,
-      lastName: values.lastName,
-      email: values.email,
-      phoneNumber: values.phoneNumber,
-      role: values.role,
-      password: values.password || "",
-      confirmPassword: values.confirmPassword || "",
-    };
-
+  const onSubmit = (values: UserFormValues | UserUpdateFormValues) => {
     if (isEdit) {
-      updateMutation.mutate({ id: initialData.id, values: payload });
+      const updateValues = values as UserUpdateFormValues;
+      const payload: UserUpdatePayload = {
+        firstName: updateValues.firstName ?? "",
+        lastName: updateValues.lastName ?? "",
+        email: updateValues.email ?? "",
+        phoneNumber: updateValues.phoneNumber ?? "",
+        role: updateValues.role ?? UserRole.USER,
+      };
+
+      updateMutation.mutate({
+        id: initialData.id,
+        values: payload,
+      });
     } else {
+      const createValues = values as UserFormValues;
+      const payload: UserCreatePayload = {
+        firstName: createValues.firstName,
+        lastName: createValues.lastName,
+        email: createValues.email,
+        phoneNumber: createValues.phoneNumber,
+        role: createValues.role,
+        password: createValues.password,
+        confirmPassword: createValues.confirmPassword,
+      };
+
       createMutation.mutate(payload);
     }
   };
@@ -131,7 +166,10 @@ export function UserForm({ initialData, pageTitle }: UserFormProps) {
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Prénom */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">First Name *</label>
+              <label className="text-sm font-medium">
+                First Name
+                <span className="ml-1 inline-block after:text-red-500 after:content-['*']" />
+              </label>
               <Input
                 {...register("firstName")}
                 placeholder="Enter first name"
@@ -146,7 +184,10 @@ export function UserForm({ initialData, pageTitle }: UserFormProps) {
 
             {/* Nom */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Last Name *</label>
+              <label className="text-sm font-medium">
+                Last Name
+                <span className="ml-1 inline-block after:text-red-500 after:content-['*']" />
+              </label>
               <Input
                 {...register("lastName")}
                 placeholder="Enter last name"
@@ -161,7 +202,10 @@ export function UserForm({ initialData, pageTitle }: UserFormProps) {
 
             {/* Email */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Email *</label>
+              <label className="text-sm font-medium">
+                Email
+                <span className="ml-1 inline-block after:text-red-500 after:content-['*']" />
+              </label>
               <Input
                 type="email"
                 {...register("email")}
@@ -175,7 +219,10 @@ export function UserForm({ initialData, pageTitle }: UserFormProps) {
 
             {/* Téléphone */}
             <div className="space-y-2">
-              <label className="text-sm font-medium">Phone Number *</label>
+              <label className="text-sm font-medium">
+                Phone Number
+                <span className="ml-1 inline-block after:text-red-500 after:content-['*']" />
+              </label>
               <Input
                 {...register("phoneNumber")}
                 placeholder="Enter phone number"
@@ -188,45 +235,36 @@ export function UserForm({ initialData, pageTitle }: UserFormProps) {
               )}
             </div>
 
-            {/* Rôle */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Role *</label>
-              <Select
-                onValueChange={(value) => setValue("role", value as UserRole)}
-                defaultValue={
-                  initialData?.role?.toString() ?? UserRole.USER.toString()
-                }
-              >
-                <SelectTrigger className={errors.role ? "border-red-500" : ""}>
-                  <SelectValue placeholder="Select a role" />
-                </SelectTrigger>
-                <SelectContent>
-                  {userOptions.map((option) => (
-                    <SelectItem
-                      key={option.value}
-                      value={option.value.toString()}
-                    >
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.role && (
-                <p className="text-sm text-red-500">{errors.role.message}</p>
-              )}
-            </div>
-
             {/* Mot de passe (uniquement en création) */}
             {!isEdit && (
               <>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Password *</label>
-                  <Input
-                    type="password"
-                    {...register("password")}
-                    placeholder="Enter password"
-                    className={errors.password ? "border-red-500" : ""}
-                  />
+                  <label className="text-sm font-medium">
+                    Password
+                    <span className="ml-1 inline-block after:text-red-500 after:content-['*']" />
+                  </label>
+                  <div className="relative">
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      {...register("password")}
+                      placeholder="Enter password"
+                      className={errors.password ? "border-red-500" : ""}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((s) => !s)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                      aria-label={
+                        showPassword ? "Hide password" : "Show password"
+                      }
+                    >
+                      {showPassword ? (
+                        <Icons.eyeOff className="h-5 w-5" />
+                      ) : (
+                        <Icons.eye className="h-5 w-5" />
+                      )}
+                    </button>
+                  </div>
                   {errors.password && (
                     <p className="text-sm text-red-500">
                       {errors.password.message}
@@ -236,14 +274,33 @@ export function UserForm({ initialData, pageTitle }: UserFormProps) {
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium">
-                    Confirm Password *
+                    Confirm Password
+                    <span className="ml-1 inline-block after:text-red-500 after:content-['*']" />
                   </label>
-                  <Input
-                    type="password"
-                    {...register("confirmPassword")}
-                    placeholder="Confirm password"
-                    className={errors.confirmPassword ? "border-red-500" : ""}
-                  />
+                  <div className="relative">
+                    <Input
+                      type={showConfirmPassword ? "text" : "password"}
+                      {...register("confirmPassword")}
+                      placeholder="Confirm password"
+                      className={errors.confirmPassword ? "border-red-500" : ""}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword((s) => !s)}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                      aria-label={
+                        showConfirmPassword
+                          ? "Hide confirm password"
+                          : "Show confirm password"
+                      }
+                    >
+                      {showConfirmPassword ? (
+                        <Icons.eyeOff className="h-5 w-5" />
+                      ) : (
+                        <Icons.eye className="h-5 w-5" />
+                      )}
+                    </button>
+                  </div>
                   {errors.confirmPassword && (
                     <p className="text-sm text-red-500">
                       {errors.confirmPassword.message}
@@ -251,6 +308,39 @@ export function UserForm({ initialData, pageTitle }: UserFormProps) {
                   )}
                 </div>
               </>
+            )}
+          </div>
+
+          {/* Rôle */}
+          <div className="w-full space-y-2 md:w-1/2">
+            <label className="text-sm font-medium">
+              Role
+              <span className="ml-1 inline-block after:text-red-500 after:content-['*']" />
+            </label>
+            <Select
+              onValueChange={(value) => setValue("role", value as UserRole)}
+              defaultValue={
+                initialData?.role?.toString() ?? UserRole.USER.toString()
+              }
+            >
+              <SelectTrigger
+                className={`w-full py-5 ${errors.role ? "border-red-500" : ""}`}
+              >
+                <SelectValue placeholder="Select a role" />
+              </SelectTrigger>
+              <SelectContent>
+                {userOptions.map((option) => (
+                  <SelectItem
+                    key={option.value}
+                    value={option.value.toString()}
+                  >
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {errors.role && (
+              <p className="text-sm text-red-500">{errors.role.message}</p>
             )}
           </div>
 

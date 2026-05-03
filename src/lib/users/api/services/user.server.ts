@@ -4,15 +4,15 @@ import apiClient from "@config/api.config";
 import environment from "@config/environment.config";
 import {
   User,
-  UserMutationPayload,
+  UserCreatePayload,
   UserFilters,
   UserSearchFilter,
+  UserUpdatePayload,
   UsersResponse,
 } from "@/lib/users/api/types";
 import {
   parseUserCreate,
   parseUserUpdate,
-  UserUpdateFormValues,
 } from "@lib/users/schemas/user";
 import { getLogger } from "@config/logger.config";
 import { ApiErrorResponse } from "@/lib/_/errors/api-error.server";
@@ -66,7 +66,7 @@ export async function getUsers(
  * Create a new user
  */
 export async function createUser(
-  user: UserMutationPayload,
+  user: UserCreatePayload,
 ): Promise<Result<User, ApiError>> {
   /**
    * Validate input data
@@ -137,7 +137,7 @@ export async function searchUsersFilter(
 
 export async function updateUser(
   id: number,
-  user: UserUpdateFormValues,
+  user: UserUpdatePayload,
 ): Promise<Result<User, ApiError>> {
   const idError = validateId(id);
   if (idError) return idError;

@@ -1,13 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { User, UserMutationPayload } from "./types";
+import { User, UserCreatePayload, UserUpdatePayload } from "./types";
 import { createUser, deleteUser, updateUser } from "./services/user.server";
 import { Result } from "@/lib/_/errors/response.model";
 import { ApiError } from "@/lib/_/errors/api-error";
 
 export async function createUserAction(
-  data: UserMutationPayload,
+  data: UserCreatePayload,
 ): Promise<Result<User, ApiError>> {
   const result = await createUser(data);
   if (result.ok) {
@@ -18,7 +18,7 @@ export async function createUserAction(
 
 export async function updateUserAction(
   id: number,
-  data: UserMutationPayload,
+  data: UserUpdatePayload,
 ): Promise<Result<User, ApiError>> {
   const result = await updateUser(id, data);
   if (result.ok) {

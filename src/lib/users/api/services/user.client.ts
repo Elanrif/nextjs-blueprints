@@ -1,10 +1,11 @@
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { proxyEnvironment } from "@config/proxy-api.config";
 import {
   User,
   UserSearchFilter,
   UserFilters,
-  UserMutationPayload,
+  UserCreatePayload,
+  UserUpdatePayload,
   UsersResponse,
 } from "@lib/users/api/types";
 import { frontendHttp } from "@config/axios/frontend-http.config";
@@ -67,26 +68,60 @@ export async function fetchUserById(
  */
 export async function updateUser(
   id: number,
-  user: UserMutationPayload,
+  user: UserUpdatePayload,
 ): Promise<Result<User, ApiError>> {
-  const res = await frontendHttp().patch<
-    unknown,
-    AxiosResponse<Result<User, ApiError>>
-  >(`${usersUrl}/${id}`, user);
-  return res.data;
+  try {
+    const res = await frontendHttp().patch<
+      unknown,
+      AxiosResponse<Result<User, ApiError>>
+    >(`${usersUrl}/${id}`, user);
+    return res.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response?.data) {
+      return error.response.data as Result<User, ApiError>;
+    }
+
+    return {
+      ok: false,
+      error: {
+        status: 500,
+        title: "Internal Error",
+        detail: error instanceof Error ? error.message : "Unknown error",
+        instance: undefined,
+        errorCode: "INTERNAL_ERROR",
+      },
+    };
+  }
 }
 
 /**
  * Create a new user (client-side)
  */
 export async function createUser(
-  user: UserMutationPayload,
+  user: UserCreatePayload,
 ): Promise<Result<User, ApiError>> {
-  const res = await frontendHttp().post<
-    unknown,
-    AxiosResponse<Result<User, ApiError>>
-  >(usersUrl, user);
-  return res.data;
+  try {
+    const res = await frontendHttp().post<
+      unknown,
+      AxiosResponse<Result<User, ApiError>>
+    >(usersUrl, user);
+    return res.data;
+  } catch (error) {
+    if (error instanceof AxiosError && error.response?.data) {
+      return error.response.data as Result<User, ApiError>;
+    }
+
+    return {
+      ok: false,
+      error: {
+        status: 500,
+        title: "Internal Error",
+        detail: error instanceof Error ? error.message : "Unknown error",
+        instance: undefined,
+        errorCode: "INTERNAL_ERROR",
+      },
+    };
+  }
 }
 
 /**
