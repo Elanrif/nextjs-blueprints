@@ -1,76 +1,65 @@
-# Installation du projet
+## Démarrage rapide
 
-Étapes à suivre dans l'ordre pour initialiser le projet from scratch.
+Les composants dans `src/lib/users/components` utilisent ces librairies runtime. Si tu veux installer uniquement ce dont ces composants ont besoin, exécute :
 
 ```bash
-# Git bash -- prod
+# Git bash -- prod (users components)
 npm install \
+  @tanstack/react-query @tanstack/react-table\
+  @tanstack/react-query-devtools react-hook-form\
+  @hookform/resolvers zod sonner nuqs
   react-hook-form @hookform/resolvers zod \
   @tanstack/react-query axios \
-  react-toastify \
   cloudinary next-cloudinary \
   nodemailer \
   pino \
   server-only rimraf \
   moment \
   babel-plugin-react-compiler
+```
 
+```bash
 # Git bash -- Dev
 npm install -D \
   @types/nodemailer \
   pino-pretty \
-  prettier eslint-config-prettier eslint-plugin-prettier prettier-plugin-classnames prettier-plugin-merge prettier-plugin-tailwindcss \
-  @eslint/css eslint-plugin-import eslint-plugin-unicorn eslint-plugin-unused-imports @tanstack/eslint-plugin-query \
+  prettier eslint-config-prettier eslint-plugin-prettier \
+  prettier-plugin-classnames prettier-plugin-merge prettier-plugin-tailwindcss \
+  @eslint/css eslint-plugin-import eslint-plugin-unicorn \
+  eslint-plugin-unused-imports @tanstack/eslint-plugin-query \
   husky lint-staged @commitlint/cli @commitlint/config-conventional \
   shx tailwind-csstree
 ```
 
-## Nouveau projet — ce qu’il faut copier
+## Fichiers / dossiers à copier pour un nouveau projet
 
-Quand tu démarres un nouveau projet basé sur ce blueprint, tu peux partir uniquement des dossiers et fichiers partagés suivants :
+Si tu veux réutiliser ce blueprint sans tout copier, prends au minimum :
 
-- `src/config`
-- `src/lib`
-- `src/utils`
-- `src/types`
-- `env` à la racine
+- `src/config/` (configuration axios, api, environment, logger)
+- `src/lib/` (logique commune, ui components, hooks)
+- `src/utils/` (helpers réutilisables)
+- `env/` (exemples `.env.*`)
 
-> Le reste peut être recréé ou adapté selon le besoin du projet. L’idée est de garder une base commune légère et de ne dupliquer que ce qui sert vraiment.
+## Commandes utiles
 
-### Architecture minimale à reprendre
-
-```txt
-env/                                 # Variables d’environnement locales et configuration sensible
-.husky/                              # husky, lancer `npm run prepare` et copier les 2 dossiers
-├── __/
-├── commit-msg
-├── pre-commit
-
-src/
-├── config/                          # Configuration partagée du projet
-├── lib/                             # Logique métier, API, helpers métier
-├── utils/                           # Fonctions utilitaires réutilisables
-└── types/                           # Types et contrats TypeScript partagés
-commitlint.config.tsc                # À ajouté
-eslint.config.mjs                    # À ajouté, l'implementation dépends aussi du projet
-tsconfig.json                        # À modifié
+```bash
+npm run env:local    # copie .env.local
+npm run dev          # démarre next en dev
+npm run build        # build
+npm run start        # start
+npm run lint         # eslint
+npm run format       # prettier
 ```
 
-Et dans `tsconfig.json`, il faut aussi ajouter ces `paths` :
-├── tsconfig.json
+## Points d’attention
+
+- Assure-toi que `tsconfig.json` contient les `paths` suivants (pratique pour imports absolus) :
 
 ```json
 "paths": {
   "@/*": ["./src/*"],
   "@lib/*": ["./src/lib/*"],
-  "@utils/*": ["./src/utils/*"],
-  "@components/*": ["./src/components/*"],
   "@config/*": ["./src/config/*"],
-  "@hooks/*": ["./src/hooks/*"],
-  "@context/*": ["./src/context/*"],
-  "@app/*": ["./src/app/*"],
-  "~/*": ["./public/*"]
+  "@/components/*": ["./src/lib/_/components/*"]
 }
 ```
-
-Cette structure permet de repartir vite sur un nouveau projet sans embarquer toute l’application d’origine. Tu gardes seulement la base commune, puis tu reconstruis les pages et composants spécifiques au besoin.
