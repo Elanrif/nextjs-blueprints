@@ -1,13 +1,132 @@
 ---
-title: Hello World
-description: Your first document
+title: Documentation Template
+description: Guide complet du design system réutilisable
 ---
 
-Welcome to the docs! You can start writing documents in `/content/docs`.
+# 🎨 Design System Template
 
-## What is Next?
+Bienvenue dans la documentation du **template frontend réutilisable**. Ce design system offre une structure complète et modulaire pour créer des applications Next.js professionnelles rapidement.
 
-<Cards>
-  <Card title="Learn more about Next.js" href="https://nextjs.org/docs" />
-  <Card title="Learn more about Fumadocs" href="https://fumadocs.dev" />
-</Cards>
+## 📖 Commencer Rapidement
+
+### Pour les Nouveaux Utilisateurs
+
+👉 **[Démarrage Rapide](/getting-started)** — Installation et configuration en 4 étapes
+
+### Pour les Développeurs
+
+👉 **[Structure du Template](/template-structure)** — Exploration complète de l'architecture  
+👉 **[Guide des Entités](/entity-guide)** — Créer une entité avec le pattern `{entity}`  
+👉 **[Architecture & Patterns](/architecture)** — Comprendre les patterns utilisés
+
+## ✨ Points Forts
+
+✅ **Pattern {entity}** — Répétable pour toute entité métier  
+✅ **Type-safe** — TypeScript partout (Zod, React Query)  
+✅ **Prêt à l'emploi** — Config, hooks, utilitaires inclus  
+✅ **Performant** — Cache React Query, lazy loading, optimisations  
+✅ **Maintenable** — Services centralisés, validation unifiée  
+✅ **Sécurisé** — Validation client et serveur
+
+## 🚀 Installation Express
+
+```bash
+# 1. Copier les dossiers
+cp -r templates/{config,lib,hooks,types,utils} src/
+
+# 2. Installer les dépendances
+npm install @tanstack/react-query react-hook-form zod axios nuqs sonner
+
+# 3. Configurer layout.tsx
+# Ajouter: NuqsAdapter, QueryProvider, Toaster
+
+# 4. Ajouter variables CSS TailwindCSS
+# Voir Démarrage Rapide pour les détails
+```
+
+**Temps estimé :** 10-15 minutes
+
+## 📚 Structure de la Documentation
+
+| Page                                             | Description                                        |
+| ------------------------------------------------ | -------------------------------------------------- |
+| **[Démarrage Rapide](/getting-started)**         | Installation, configuration, checklist             |
+| **[Structure du Template](/template-structure)** | Arborescence complète, organisation des dossiers   |
+| **[Guide des Entités](/entity-guide)**           | Exemple complet : créer une entité `users`         |
+| **[Architecture & Patterns](/architecture)**     | Patterns, data flow, optimisations, best practices |
+
+## 💡 Exemple : Créer une Entité `users`
+
+### En 5 fichiers
+
+1. **Types** — `lib/users/api/types.ts`
+2. **Validation** — `lib/users/schemas/user.schema.ts`
+3. **Service** — `lib/users/api/services/user.client.ts`
+4. **Hooks** — `lib/users/api/queries/queries.client.ts`
+5. **Mutations** — `lib/users/api/mutations.ts`
+
+```tsx
+// Puis dans votre page
+"use client";
+
+import { useUserList } from "@/lib/users/api/queries";
+
+export default function UsersPage() {
+  const { data, isLoading } = useUserList();
+
+  return <Table data={data?.data} />;
+}
+```
+
+👉 **[Guide Détaillé](/entity-guide)**
+
+## 🛠️ Tech Stack
+
+- **React 18** — Composants côté client
+- **Next.js 14** — App Router, Server Actions
+- **TypeScript** — Type-safety complète
+- **React Query** — Cache serveur
+- **React Hook Form** — Formulaires réactifs
+- **Zod** — Validation de schémas
+- **Axios** — HTTP client
+- **TailwindCSS** — Styling
+- **Radix UI** — Composants accessibles
+- **Sonner** — Toast notifications
+
+## 📋 Checklist Intégration
+
+- [ ] Dossiers copiés
+- [ ] Layout configuré
+- [ ] Dépendances installées
+- [ ] Variables CSS ajoutées
+- [ ] API endpoint configurée
+- [ ] Première entité créée
+
+## ❓ Questions Courantes
+
+**Q : Je dois utiliser le template exactement comme présenté ?**  
+R : Non ! C'est une structure de base. Adapte-la à tes besoins.
+
+**Q : Puis-je ajouter d'autres librairies ?**  
+R : Bien sûr ! Ajoute n'importe quelle dépendance. Le template n'est pas restrictif.
+
+**Q : Comment gérer l'authentification ?**  
+R : Il y a déjà un module `lib/auth`. Voir la doc pour plus de détails.
+
+**Q : C'est quoi le pattern {entity} ?**  
+R : Une structure réutilisable pour toute entité (users, products, etc). Voir [Entity Guide](/entity-guide).
+
+## 🚀 Prochaines Étapes
+
+1. **Lire** : [Démarrage Rapide](/getting-started)
+2. **Installer** : Suivre les 4 étapes
+3. **Créer** : Une première entité
+4. **Comprendre** : L'architecture globale
+
+## 📞 Support
+
+Pour des questions ou pour contribuer, consulte la documentation complète de chaque section.
+
+---
+
+**Bonne chance avec ton projet ! 🎉**

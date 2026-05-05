@@ -1,0 +1,244 @@
+---
+title: Structure du Template
+description: Comprendre l'organisation complète du design system réutilisable
+---
+
+## 📐 Architecture Générale
+
+Le template est organisé autour d'une **architecture modulaire** où chaque entité (`{entity}`) suit le même pattern structuré. Cela permet une copie rapide et cohérente du design system dans n'importe quel projet.
+
+## 🗂️ Arborescence Complète
+
+```
+templates/
+├── eslint.config.mjs          # Configuration ESLint partagée
+├── README.md                  # Documentation générale
+├── tsconfig.json             # Configuration TypeScript
+│
+├── config/                   # Configurations centralisées
+│   ├── api.config.ts
+│   ├── axios.config.ts
+│   ├── data-table.ts
+│   ├── environment.config.ts
+│   ├── logger.config.ts
+│   ├── proxy-api.config.ts
+│   ├── axios/
+│   │   ├── base-request.config.ts
+│   │   └── frontend-http.config.ts
+│   └── interceptors/
+│       ├── auth.interceptor.ts
+│       └── logger.interceptor.ts
+│
+├── env/                      # Variables d'environnement
+│
+├── hooks/                    # React hooks réutilisables
+│   ├── use-callback-ref.tsx
+│   ├── use-click-outside.ts
+│   ├── use-data-table.ts
+│   ├── use-debounced-callback.ts
+│   └── use-mobile.ts
+│
+├── lib/                      # Utilitaires et logique métier
+│   ├── auth.utils.ts
+│   ├── data-table.ts
+│   ├── format-message-time.ts
+│   ├── format-number.ts
+│   ├── format.ts
+│   ├── mail.ts
+│   ├── parsers.ts
+│   ├── query-client.ts
+│   ├── searchparams.ts
+│   ├── utils.ts
+│   │
+│   ├── _/                    # Utilitaires privés
+│   │   ├── cloudinary/       # Gestion des images
+│   │   │   ├── cloudinary.actions.ts
+│   │   │   ├── cloudinary.config.ts
+│   │   │   ├── cloudinary.model.ts
+│   │   │   ├── cloudinary.utils.ts
+│   │   │   └── hooks/
+│   │   │
+│   │   ├── components/       # Composants de base
+│   │   │   ├── heading.tsx
+│   │   │   ├── icons.tsx
+│   │   │   ├── layout/
+│   │   │   ├── modal/
+│   │   │   └── ui/
+│   │   │
+│   │   └── errors/           # Gestion des erreurs
+│   │       ├── api-error.server.ts
+│   │       ├── api-error.ts
+│   │       └── response.model.ts
+│   │
+│   ├── auth/                 # Module d'authentification
+│   │   ├── api/
+│   │   │   ├── action.ts
+│   │   │   ├── mutation.ts
+│   │   │   ├── types.ts
+│   │   │   └── services/
+│   │   ├── components/
+│   │   │   ├── auth.context.tsx
+│   │   │   ├── sign-in-view.tsx
+│   │   │   └── sign-up-view.tsx
+│   │   └── schemas/
+│   │       └── auth.schema.ts
+│   │
+│   └── {entity}/              # Pattern générique pour toute entité
+│       ├── api/
+│       │   ├── action.ts                    # Server actions
+│       │   ├── mutations.ts                 # React Query mutations
+│       │   ├── types.ts                     # Types TypeScript
+│       │   ├── queries/
+│       │   │   ├── index.ts                 # Exports
+│       │   │   ├── queries.client.ts        # useQuery hooks
+│       │   │   └── queries.server.ts        # Requêtes serveur
+│       │   └── services/
+│       │       ├── {entity}.client.ts       # Service API client
+│       │       └── {entity}.server.ts       # Service serveur
+│       │
+│       ├── components/
+│       │   ├── {entity}-form.tsx            # Formulaire de création/édition
+│       │   ├── {entity}-listing.tsx         # Liste simple
+│       │   ├── {entity}-view-page.tsx       # Détail d'une entité
+│       │   └── {entity}-table/
+│       │       └── columns.tsx              # Colonnes TanStack table
+│       │
+│       └── schemas/
+│           └── {entity}.schema.ts           # Validation Zod
+│
+├── types/                    # Types globaux
+│   ├── data-table.ts
+│   ├── global.d.ts
+│   ├── icon-props.ts
+│   ├── index.ts
+│   └── set-state-action-type.ts
+│
+└── utils/                    # Utilitaires généraux
+    ├── index.ts
+    ├── routes.ts
+    └── timeframe-extractor.ts
+```
+
+## 🎯 Principes de Design
+
+### 1. **Pattern {entity}**
+
+Chaque module métier suit le même pattern pour garantir la cohérence :
+
+- **API Layer** : Services, queries, mutations
+- **Components Layer** : Formulaires, listes, vues
+- **Schema Layer** : Validation avec Zod
+
+### 2. **Séparation Client/Serveur**
+
+```
+api/queries/
+├── queries.client.ts    → useQuery hooks côté client
+└── queries.server.ts    → Fonctions async côté serveur
+
+api/services/
+├── {entity}.client.ts   → Appels API via Axios
+└── {entity}.server.ts   → Accès direct base de données
+```
+
+### 3. **Configuration Centralisée**
+
+Tous les configs critiques sont dans `config/` :
+
+- ✅ Axios & interceptors
+- ✅ Variables d'environnement
+- ✅ Logger & monitoring
+- ✅ Query client React Query
+
+### 4. **Utilitaires Partagés**
+
+- `lib/_/` : Utilitaires "privés" (gestion erreurs, images, composants base)
+- `lib/` : Utilitaires publics (formatage, parsing, authentification)
+- `hooks/` : Hooks React réutilisables
+
+## 💡 Points d'Extension
+
+### Ajouter une nouvelle entité
+
+1. **Dupliquer le pattern** `lib/{entity}`
+2. **Remplacer** `{entity}` par votre nom (ex: `users`, `products`)
+3. **Adapter** les types et schémas
+4. **Ajouter** les composants UI spécifiques
+
+Exemple avec `users` :
+
+```
+lib/users/
+├── api/
+│   ├── types.ts
+│   ├── queries/
+│   ├── services/
+│   └── mutations.ts
+├── components/
+│   ├── user-form.tsx
+│   ├── user-table/
+│   └── user-view-page.tsx
+└── schemas/
+    └── user.schema.ts
+```
+
+### Modifier les configurations
+
+Les configs se propagent à travers les interceptors :
+
+```typescript
+// config/interceptors/auth.interceptor.ts
+// Ajouter du token automatiquement
+// Gérer les 401/403
+```
+
+## 🔄 Data Flow
+
+```
+┌─────────────────────┐
+│  React Component    │
+│   (page.tsx)        │
+└──────────┬──────────┘
+           │
+┌──────────▼──────────────┐
+│  React Query Hook       │
+│  (useQuery/useMutation) │
+└──────────┬──────────────┘
+           │
+┌──────────▼──────────────┐
+│  Service Class          │
+│  ({entity}.client.ts)   │
+└──────────┬──────────────┘
+           │
+┌──────────▼──────────────┐
+│  Axios Instance         │
+│  (+ interceptors)       │
+└──────────┬──────────────┘
+           │
+       Backend API
+```
+
+## 📦 Dépendances Clés
+
+```json
+{
+  "@tanstack/react-query": "Gestion du cache serveur",
+  "@tanstack/react-table": "Tables de données",
+  "react-hook-form": "Formulaires réactifs",
+  "zod": "Validation de schémas",
+  "axios": "Client HTTP",
+  "radix-ui": "Composants accessibles",
+  "nuqs": "URL search params",
+  "sonner": "Notifications toast"
+}
+```
+
+## ✅ Checklist Structure
+
+- [ ] Tous les `config/` importés dans `layout.tsx`
+- [ ] `QueryProvider` enveloppant l'app
+- [ ] `NuqsAdapter` pour les paramètres URL
+- [ ] Variables CSS TailwindCSS configurées
+- [ ] Entités suivant le pattern `lib/{entity}`
+- [ ] Services centralisés
+- [ ] Types exportés depuis `types.ts`
