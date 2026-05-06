@@ -1,0 +1,486 @@
+---
+title: Architecture & Patterns
+description: Patterns et principes architecturaux du design system
+---
+
+## 🏗️ Architecture Générale
+
+L'application suit une **architecture en couches** où la responsabilité est clairement définie à chaque niveau :
+
+```
+┌─────────────────────────────────┐
+│  React Components (UI Layer)    │
+│  pages.tsx, components/         │
+└────────────┬────────────────────┘
+             │
+┌────────────▼────────────────────┐
+│  React Query / Mutations        │
+│  (State Management Layer)       │
+└────────────┬────────────────────┘
+             │
+┌────────────▼────────────────────┐
+│  Services & Queries             │
+│  (Business Logic Layer)         │
+└────────────┬────────────────────┘
+             │
+┌────────────▼────────────────────┐
+│  Axios + Interceptors           │
+│  (HTTP Client Layer)            │
+└────────────┬────────────────────┘
+             │
+        Backend API / Database
+```
+
+### Principes
+
+1. **Séparation des concerns** — Chaque couche a une responsabilité unique
+2. **Type-safety** — TypeScript partout
+3. **Réutilisabilité** — Services et hooks centralisés
+4. **Testabilité** — Logique métier indépendante des composants
+5. **Performance** — Cache avec React Query
+
+---
+
+## 🔄 Data Flow
+
+### 1️⃣ Client-side Fetching (Mode Interactif)
+
+**Quand l'utiliser :** Pages avec filtres, recherche, pagination fréquente
+
+```tsx
+"use client";
+
+export function UsersList() {
+  const [page, setPage] = useState(1);
+  const { data, isLoading } = useUserList({ page });
+
+  return (
+    <div>
+      <Table data={data?.data} />
+      <Pagination page={page} onPageChange={setPage} total={data?.totalPages} />
+    </div>
+  );
+}
+```
+
+**Flow :**
+
+1. Utilisateur interagit → state change
+2. `useUserList` refetch automatiquement
+3. React Query cache la réponse
+4. Component re-render avec nouvelles données
+
+### 2️⃣ Server-side Fetching (Mode SEO)
+
+**Quand l'utiliser :** Pages statiques, données pré-rendues
+
+```typescript
+// lib/users/api/queries/queries.server.ts
+export async function getUserList(filters?: UserFilters) {
+  return await userService.list(filters);
+}
+```
+
+**Usage :**
+
+```tsx
+// src/app/users/page.tsx
+import { getUserList } from "@/lib/users/api/queries/queries.server";
+
+export default async function UsersPage() {
+  const users = await getUserList();
+
+  return (
+    <div>
+      <h1>Utilisateurs</h1>
+      {/* users est déjà chargé */}
+      <UserTable data={users} />
+    </div>
+  );
+}
+```
+
+---
+
+## 🎯 Patterns Architecturaux
+
+### Pattern 1 : Service Pattern
+
+**Objectif :** Centraliser la logique métier, indépendamment des composants
+
+```typescript
+// lib/users/api/services/user.client.ts
+
+class UserClientService {
+  async list(filters?: UserFilters): Promise<UserResponse> {
+    // Logique partagée pour tous les composants
+    return await axiosInstance.get("/users", { params: filters });
+  }
+
+  async create(data: UserCreate): Promise<User> {
+    // Validation, transformation, appel API
+    return await axiosInstance.post("/users", data);
+  }
+}
+
+export const userService = new UserClientService();
+```
+
+**Avantages :**
+
+- ✅ Logique centralisée
+- ✅ Facile à tester
+- ✅ Réutilisable dans plusieurs composants
+- ✅ Facile à modifier l'API sans toucher aux composants
+
+### Pattern 2 : Custom Hooks Pattern
+
+**Objectif :** Encapsuler React Query + logique métier
+
+```typescript
+// lib/users/api/queries/queries.client.ts
+
+export const useUserList = (filters?: UserFilters) => {
+  return useQuery({
+    queryKey: ["users:list", filters],
+    queryFn: () => userService.list(filters),
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
+  });
+};
+```
+
+**Utilisation :**
+
+```tsx
+function UsersList() {
+  const { data, isLoading, error } = useUserList({ page: 1 });
+
+  return /* ... */;
+}
+```
+
+**Avantages :**
+
+- ✅ Abstrait la complexité de React Query
+- ✅ Logique réutilisable en un ligne
+- ✅ Cache automatique géré
+- ✅ Loading/error states inclus
+
+### Pattern 3 : Mutation Pattern
+
+**Objectif :** Gérer modifications + cache invalidation + erreurs
+
+```typescript
+// lib/users/api/mutations.ts
+
+export const useCreateUser = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: userService.create,
+    onSuccess: () => {
+      // Invalide le cache automatiquement
+      queryClient.invalidateQueries({ queryKey: ["users:list"] });
+      toast.success("Créé avec succès");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+};
+```
+
+**Utilisation :**
+
+```tsx
+function CreateUserForm() {
+  const mutation = useCreateUser();
+
+  const handleSubmit = async (data) => {
+    await mutation.mutateAsync(data);
+  };
+
+  return <form onSubmit={handleSubmit}>{/* ... */}</form>;
+}
+```
+
+**Avantages :**
+
+- ✅ Cache invalidation automatique
+- ✅ Gestion erreurs centralisée
+- ✅ Optimistic updates possibles
+- ✅ Loading state fourni
+
+### Pattern 4 : Validation Pattern
+
+**Objectif :** Valider client-side (UX) et server-side (sécurité)
+
+```typescript
+// lib/users/schemas/user.schema.ts
+export const UserCreateSchema = z.object({
+  name: z.string().min(1).max(100),
+  email: z.string().email(),
+  role: z.enum(["admin", "user"]),
+});
+```
+
+**Utilisation Client :**
+
+```tsx
+const form = useForm({
+  resolver: zodResolver(UserCreateSchema),
+});
+
+// Validation automatique en tapant
+```
+
+**Utilisation Serveur (Server Action) :**
+
+```typescript
+"use server";
+
+export async function createUser(data: unknown) {
+  // Validation serveur pour la sécurité
+  const validData = UserCreateSchema.parse(data);
+  return await db.user.create({ data: validData });
+}
+```
+
+**Avantages :**
+
+- ✅ Single source of truth pour la validation
+- ✅ Réutilisable côté client et serveur
+- ✅ Sécurité : validation serveur obligatoire
+
+---
+
+## 🔌 Interceptors & Middleware
+
+### Authentification
+
+**File:** `lib/config/interceptors/auth.interceptor.ts`
+
+```typescript
+axiosInstance.interceptors.request.use((config) => {
+  // Ajouter le token à chaque requête
+  const token = localStorage.getItem("auth_token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Gérer 401 (token expiré)
+    if (error.response?.status === 401) {
+      // Redirect vers login
+      window.location.href = "/login";
+    }
+    return Promise.reject(error);
+  },
+);
+```
+
+### Logging
+
+**File:** `lib/config/interceptors/logger.interceptor.ts`
+
+```typescript
+axiosInstance.interceptors.request.use((config) => {
+  logger.info(`[API] ${config.method?.toUpperCase()} ${config.url}`);
+  return config;
+});
+
+axiosInstance.interceptors.response.use(
+  (response) => {
+    logger.info(`[API] ✅ ${response.status}`);
+    return response;
+  },
+  (error) => {
+    logger.error(`[API] ❌ ${error.response?.status}`, error);
+    return Promise.reject(error);
+  },
+);
+```
+
+---
+
+## 💾 Caching Strategy
+
+### Configuration React Query
+
+```typescript
+// lib/query-client.ts
+export const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 min avant "stale"
+      gcTime: 10 * 60 * 1000, // Garder 10 min en cache
+      retry: 1, // Retry 1 fois
+      refetchOnWindowFocus: false, // Ne pas refetch au focus
+    },
+    mutations: {
+      retry: 0, // Pas de retry mutations
+    },
+  },
+});
+```
+
+### Exemple : Pagination avec Cache
+
+```typescript
+// ✅ Cache séparé par page
+const { data } = useQuery({
+  queryKey: ["users:list", { page: 1 }], // Page 1 = clé unique
+  queryFn: () => userService.list({ page: 1 }),
+});
+
+// Changer de page = nouvelle clé = cache automatique
+```
+
+---
+
+## 🚨 Gestion des Erreurs
+
+### Classe personnalisée
+
+```typescript
+// lib/_/errors/api-error.ts
+export class ApiError extends Error {
+  constructor(
+    public status: number,
+    public message: string,
+    public data?: any,
+  ) {
+    super(message);
+  }
+}
+```
+
+### Dans les composants
+
+```tsx
+function UsersList() {
+  const { error } = useUserList();
+
+  if (error instanceof ApiError) {
+    if (error.status === 404) {
+      return <p>Utilisateurs non trouvés</p>;
+    }
+    if (error.status === 403) {
+      return <p>Accès refusé</p>;
+    }
+  }
+
+  return <p>Erreur : {error?.message}</p>;
+}
+```
+
+---
+
+## ⚡ Optimisations
+
+### 1. Lazy Loading
+
+```tsx
+import { lazy, Suspense } from "react";
+
+const DataTable = lazy(() => import("./data-table"));
+
+export function Page() {
+  return (
+    <Suspense fallback={<Skeleton />}>
+      <DataTable />
+    </Suspense>
+  );
+}
+```
+
+### 2. Debounce Search
+
+```typescript
+import { useDebounce } from "@/hooks/use-debounced-callback";
+
+function SearchUsers() {
+  const [search, setSearch] = useState("");
+  const debouncedSearch = useDebounce(search, 500);
+  const { data } = useUserList({ search: debouncedSearch });
+
+  return (
+    <input
+      value={search}
+      onChange={(e) => setSearch(e.target.value)}
+      placeholder="Chercher..."
+    />
+  );
+}
+```
+
+### 3. Deduplication
+
+React Query déduplique automatiquement les requêtes identiques :
+
+```typescript
+// Ces 2 requêtes ne font qu'1 appel API
+useUserList({ page: 1 });
+useUserList({ page: 1 }); // Même clé = résultat en cache
+```
+
+---
+
+## 📊 Data Flow Complet
+
+### Exemple : Créer un Utilisateur
+
+```
+User tape dans formulaire
+    ↓
+form.handleSubmit(onSubmit)
+    ↓
+mutation.mutateAsync(data)
+    ↓
+UserCreateSchema.parse(data) ← Validation
+    ↓
+userService.create(data)
+    ↓
+axiosInstance.post("/users", data)
+    ↓
+auth.interceptor ajoute le token
+    ↓
+Backend crée l'utilisateur
+    ↓
+Response retourne l'utilisateur
+    ↓
+onSuccess: queryClient.invalidateQueries()
+    ↓
+useUserList refetch automatiquement
+    ↓
+Component re-render avec nouvelles données
+    ↓
+toast.success("Créé avec succès")
+```
+
+---
+
+## ✅ Checklist Architecture
+
+- [ ] Services centralisés
+- [ ] Custom hooks pour React Query
+- [ ] Schémas Zod pour validation
+- [ ] Interceptors configurés
+- [ ] Cache strategy définie
+- [ ] Erreurs gérées proprement
+- [ ] Client/Server logic séparée
+- [ ] Types TypeScript partout
+
+---
+
+## 📚 Ressources
+
+- [React Query Docs](https://tanstack.com/query/latest)
+- [Zod Validation](https://zod.dev)
+- [Next.js Data Fetching](https://nextjs.org/docs/app/building-your-application/data-fetching)
+- [TypeScript Best Practices](https://www.typescriptlang.org/docs/handbook)

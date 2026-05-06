@@ -1,0 +1,303 @@
+---
+title: Démarrage Rapide
+description: Guide complet pour intégrer le template dans votre projet
+---
+
+## 🚀 Installation en 4 étapes
+
+### Étape 1 : Copier les dossiers du template
+
+```bash
+# Depuis le répertoire du template
+cp -r env config lib hooks types utils eslint.config.mjs tsconfig.json ../votre-projet-destination/src/
+```
+
+**Dossiers copiés :**
+
+- `env/` - Variables d'environnement
+- `config/` - Configurations Axios, API, interceptors
+- `lib/` - Utilitaires, services, patterns entités
+- `hooks/` - React hooks réutilisables
+- `types/` - Types TypeScript globaux
+- `utils/` - Utilitaires généraux
+- `eslint.config.mjs` - Configuration ESLint
+- `tsconfig.json` - Configuration TypeScript
+
+---
+
+## Étape 2 : Mettre à jour `src/app/layout.tsx`
+
+Remplacez votre `layout.tsx` par cette structure :
+
+```tsx
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Toaster } from "@/lib/_/components/ui/sonner";
+import QueryProvider from "@/lib/_/components/layout/query-provider";
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="fr">
+      <body>
+        <NuqsAdapter>
+          <QueryProvider>
+            <Toaster />
+            {children}
+          </QueryProvider>
+        </NuqsAdapter>
+      </body>
+    </html>
+  );
+}
+```
+
+**Ce que cela configure :**
+
+- `NuqsAdapter` → Gestion des paramètres URL
+- `QueryProvider` → React Query pour le cache serveur
+- `Toaster` → Notifications (Sonner)
+
+---
+
+## Étape 3 : Installer les dépendances
+
+```bash
+npm install \
+  @tanstack/react-query \
+  @tanstack/react-table \
+  @tanstack/react-query-devtools \
+  react-hook-form \
+  @hookform/resolvers \
+  zod \
+  nuqs \
+  react-day-picker \
+  radix-ui \
+  @radix-ui/react-scroll-area \
+  @radix-ui/react-slider \
+  @radix-ui/react-icons \
+  lucide-react \
+  @tabler/icons-react \
+  cmdk \
+  sonner \
+  axios \
+  rimraf \
+  pino \
+  nodemailer \
+  cloudinary \
+  next-cloudinary \
+  moment
+```
+
+**Dev dependencies :**
+
+```bash
+npm install -D \
+  husky \
+  lint-staged \
+  pino-pretty \
+  shx \
+  @tanstack/eslint-plugin-query \
+  @types/nodemailer
+```
+
+---
+
+## Étape 4 : Configurer TailwindCSS
+
+### 4.1 Ajouter les couleurs dans `tailwind.config.ts` :
+
+```ts
+export default {
+  theme: {
+    extend: {
+      colors: {
+        background: "rgb(var(--background) / <alpha-value>)",
+        foreground: "rgb(var(--foreground) / <alpha-value>)",
+        card: "rgb(var(--card) / <alpha-value>)",
+        "card-foreground": "rgb(var(--card-foreground) / <alpha-value>)",
+        popover: "rgb(var(--popover) / <alpha-value>)",
+        "popover-foreground": "rgb(var(--popover-foreground) / <alpha-value>)",
+        primary: "rgb(var(--primary) / <alpha-value>)",
+        "primary-foreground": "rgb(var(--primary-foreground) / <alpha-value>)",
+        secondary: "rgb(var(--secondary) / <alpha-value>)",
+        "secondary-foreground":
+          "rgb(var(--secondary-foreground) / <alpha-value>)",
+        muted: "rgb(var(--muted) / <alpha-value>)",
+        "muted-foreground": "rgb(var(--muted-foreground) / <alpha-value>)",
+        accent: "rgb(var(--accent) / <alpha-value>)",
+        "accent-foreground": "rgb(var(--accent-foreground) / <alpha-value>)",
+        destructive: "rgb(var(--destructive) / <alpha-value>)",
+        "destructive-foreground":
+          "rgb(var(--destructive-foreground) / <alpha-value>)",
+        border: "rgb(var(--border) / <alpha-value>)",
+        input: "rgb(var(--input) / <alpha-value>)",
+        ring: "rgb(var(--ring) / <alpha-value>)",
+      },
+    },
+  },
+};
+```
+
+### 4.2 Ajouter les variables CSS dans `src/app/global.css` :
+
+```css
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Thème clair (défaut) */
+    --background: 243 244 246;
+    --foreground: 17 24 40;
+    --card: 255 255 255;
+    --card-foreground: 17 24 40;
+    --popover: 255 255 255;
+    --popover-foreground: 17 24 40;
+    --primary: 60 80 224;
+    --primary-foreground: 255 255 255;
+    --secondary: 229 231 235;
+    --secondary-foreground: 17 24 40;
+    --muted: 243 244 246;
+    --muted-foreground: 107 114 128;
+    --accent: 239 244 251;
+    --accent-foreground: 17 24 40;
+    --destructive: 242 48 48;
+    --destructive-foreground: 255 255 255;
+    --border: 230 235 241;
+    --input: 229 231 235;
+    --ring: 60 80 224;
+    --radius: 0.75rem;
+    --radius-md: 0.625rem;
+  }
+
+  .dark {
+    /* Thème sombre */
+    --background: 2 13 26;
+    --foreground: 229 231 235;
+    --card: 18 32 49;
+    --card-foreground: 229 231 235;
+    --popover: 18 32 49;
+    --popover-foreground: 229 231 235;
+    --primary: 84 117 229;
+    --primary-foreground: 255 255 255;
+    --secondary: 31 42 55;
+    --secondary-foreground: 229 231 235;
+    --muted: 31 42 55;
+    --muted-foreground: 156 163 175;
+    --accent: 31 42 55;
+    --accent-foreground: 229 231 235;
+    --destructive: 245 96 96;
+    --destructive-foreground: 255 255 255;
+    --border: 39 48 62;
+    --input: 39 48 62;
+    --ring: 84 117 229;
+  }
+}
+```
+
+---
+
+## 📋 Configuration des Variables d'Environnement
+
+Créez `.env.local` dans la racine du projet :
+
+```bash
+# API
+NEXT_PUBLIC_API_URL=http://localhost:3001/api
+NEXT_PUBLIC_API_TIMEOUT=10000
+
+# Authentification
+NEXT_PUBLIC_AUTH_URL=http://localhost:3000/auth
+
+# Cloudinary (optionnel)
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=votre_cloud_name
+NEXT_PUBLIC_CLOUDINARY_API_KEY=votre_api_key
+
+# Monitoring/Logging
+NEXT_PUBLIC_LOG_LEVEL=info
+
+# Base de données (si applicable)
+DATABASE_URL=postgresql://user:password@localhost/db_name
+```
+
+---
+
+## ✅ Checklist d'Intégration
+
+- [ ] Dossiers copiés (`env`, `config`, `lib`, `hooks`, `types`, `utils`, `eslint.config.mjs`, `tsconfig.json`)
+- [ ] `src/app/layout.tsx` mis à jour avec `NuqsAdapter`, `QueryProvider`, `Toaster`
+- [ ] Dépendances npm installées
+- [ ] `tailwind.config.ts` mis à jour avec les couleurs
+- [ ] `src/app/global.css` mis à jour avec les variables CSS
+- [ ] `.env.local` configuré
+- [ ] Composants importables depuis `@/lib`
+- [ ] QueryClient accessible dans les composants
+
+---
+
+## 🎯 Premier Composant
+
+Une fois intégré, vous pouvez créer votre première entité. Voici un exemple avec `users` :
+
+```tsx
+// src/app/users/page.tsx
+"use client";
+
+import { useUserList } from "@/lib/users/api/queries";
+import { UserTable } from "@/lib/users/components/user-table";
+
+export default function UsersPage() {
+  const { data, isLoading, error } = useUserList({ page: 1, size: 20 });
+
+  if (isLoading) return <div>Chargement...</div>;
+  if (error) return <div>Erreur : {error.message}</div>;
+
+  return (
+    <div>
+      <h1>Utilisateurs</h1>
+      <UserTable data={data?.data} />
+    </div>
+  );
+}
+```
+
+Voir le guide complet : [Guide des Entités](/entity-guide)
+
+---
+
+## 🔧 Dépannage Courant
+
+### Erreur : "Cannot find module '@/lib'"
+
+→ Assurez-vous que `jsconfig.json` ou `tsconfig.json` configure l'alias `@`:
+
+```json
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
+}
+```
+
+### Erreur : "QueryClient not found"
+
+→ Vérifiez que `QueryProvider` enveloppe correctement votre app dans `layout.tsx`
+
+### Erreur : "Toaster not found"
+
+→ Vérifiez que `sonner` est installé et que `Toaster` est importé
+
+---
+
+## 📚 Prochaines Étapes
+
+1. **Lire** : [Structure du Template](/template-structure)
+2. **Créer** : Votre première entité avec le [Guide des Entités](/entity-guide)
+3. **Comprendre** : L'[Architecture](/architecture) et les patterns
