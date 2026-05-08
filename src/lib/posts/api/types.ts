@@ -5,6 +5,10 @@
 
 import { UserSummary } from "@/lib/users/api/types";
 
+// ============================================================================
+// CORE ENTITIES
+// ============================================================================
+
 export interface Post {
   id: number;
   title: string;
@@ -16,6 +20,20 @@ export interface Post {
   updatedAt: string;
 }
 
+// ============================================================================
+// REQUEST & RESPONSE TYPES
+// ============================================================================
+
+export type PostFilters = {
+  page?: number;
+  size?: number;
+  sort?: string;
+};
+
+// ============================================================================
+// MUTATION PAYLOADS
+// ============================================================================
+
 export interface PostCreate {
   title: string;
   imageUrl: string;
@@ -25,9 +43,3 @@ export interface PostCreate {
 }
 
 export type PostUpdate = Partial<PostCreate>;
-
-export type PostFilters = {
-  page?: number;
-  size?: number;
-  sort?: string;
-};

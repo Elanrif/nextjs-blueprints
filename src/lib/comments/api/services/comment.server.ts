@@ -27,7 +27,7 @@ import { validateId } from "@/utils";
 const {
   api: {
     rest: {
-      endpoints: { comments: COMMENTS_URL },
+      endpoints: { comments: commentsUrl },
     },
   },
 } = environment;
@@ -44,7 +44,7 @@ export async function getComments(
     const res = await apiClient(true).get<
       unknown,
       AxiosResponse<Page<Comment[]>>
-    >(COMMENTS_URL, {
+    >(commentsUrl, {
       params: filters,
     });
 
@@ -70,7 +70,7 @@ export async function getCommentById(
 
   try {
     const res = await apiClient(true).get<unknown, AxiosResponse<Comment>>(
-      `${COMMENTS_URL}/${id}`,
+      `${commentsUrl}/${id}`,
     );
 
     return { ok: true, data: res.data };
@@ -103,7 +103,7 @@ export async function createComment(
 
   try {
     const res = await apiClient(true).post<unknown, AxiosResponse<Comment>>(
-      COMMENTS_URL,
+      commentsUrl,
       parse.data,
     );
     logger.info(
@@ -144,7 +144,7 @@ export async function updateComment(
 
   try {
     const res = await apiClient(true).patch<unknown, AxiosResponse<Comment>>(
-      `${COMMENTS_URL}/${id}`,
+      `${commentsUrl}/${id}`,
       parse.data,
     );
     logger.info(
@@ -171,7 +171,7 @@ export async function deleteComment(
   if (idError) return idError;
 
   try {
-    await apiClient(true).delete(`${COMMENTS_URL}/${id}`);
+    await apiClient(true).delete(`${commentsUrl}/${id}`);
     logger.info({ id }, "Comment deleted successfully");
     return { ok: true, data: { success: true } };
   } catch (error) {

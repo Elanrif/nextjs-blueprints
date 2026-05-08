@@ -8,7 +8,7 @@ import { ApiError } from "@/lib/_/errors/api-error";
 const {
   api: {
     rest: {
-      endpoints: { comments: COMMENTS_URL },
+      endpoints: { comments: commentsUrl },
     },
   },
 } = proxyEnvironment;
@@ -19,7 +19,7 @@ export async function fetchComments(
   const res = await frontendHttp().get<
     unknown,
     AxiosResponse<Result<Page<Comment[]>, ApiError>>
-  >(COMMENTS_URL, { params: filters });
+  >(commentsUrl, { params: filters });
   return res.data;
 }
 
@@ -29,6 +29,6 @@ export async function fetchCommentById(
   const res = await frontendHttp().get<
     unknown,
     AxiosResponse<Result<Comment, ApiError>>
-  >(`${COMMENTS_URL}/${id}`);
+  >(`${commentsUrl}/${id}`);
   return res.data;
 }

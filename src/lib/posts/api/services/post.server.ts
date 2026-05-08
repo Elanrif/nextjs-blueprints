@@ -27,7 +27,7 @@ import { validateId } from "@/utils";
 const {
   api: {
     rest: {
-      endpoints: { posts: POSTS_URL },
+      endpoints: { posts: postsUrl },
     },
   },
 } = environment;
@@ -42,7 +42,7 @@ export async function getPosts(
 ): Promise<Result<Page<Post[]>, ApiError>> {
   try {
     const res = await apiClient(true).get<unknown, AxiosResponse<Page<Post[]>>>(
-      POSTS_URL,
+      postsUrl,
       {
         params: filters,
       },
@@ -67,7 +67,7 @@ export async function getPostById(id: number): Promise<Result<Post, ApiError>> {
 
   try {
     const res = await apiClient(true).get<unknown, AxiosResponse<Post>>(
-      `${POSTS_URL}/${id}`,
+      `${postsUrl}/${id}`,
     );
     return { ok: true, data: res.data };
   } catch (error) {
@@ -98,7 +98,7 @@ export async function createPost(
   }
   try {
     const res = await apiClient(true).post<unknown, AxiosResponse<Post>>(
-      POSTS_URL,
+      postsUrl,
       parse.data,
     );
     logger.info(
@@ -136,7 +136,7 @@ export async function updatePost(
 
   try {
     const res = await apiClient(true).patch<unknown, AxiosResponse<Post>>(
-      `${POSTS_URL}/${id}`,
+      `${postsUrl}/${id}`,
       parse.data,
     );
     logger.info({ id, title: res.data.title }, "Post updated successfully");
@@ -160,7 +160,7 @@ export async function deletePost(
   if (idError) return idError;
 
   try {
-    await apiClient(true).delete(`${POSTS_URL}/${id}`);
+    await apiClient(true).delete(`${postsUrl}/${id}`);
     logger.info({ id }, "Post deleted successfully");
     return { ok: true, data: { success: true } };
   } catch (error) {

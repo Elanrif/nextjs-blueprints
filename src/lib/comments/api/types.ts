@@ -1,12 +1,8 @@
 import { UserSummary } from "@/lib/users/api/types";
 
-export type CommentFilters = {
-  postId?: number;
-  authorId?: number;
-  page?: number;
-  size?: number;
-  sort?: string;
-};
+// ============================================================================
+// CORE ENTITIES
+// ============================================================================
 
 export interface Comment {
   id: number;
@@ -16,6 +12,22 @@ export interface Comment {
   createdAt: string;
   updatedAt: string;
 }
+
+// ============================================================================
+// REQUEST & RESPONSE TYPES
+// ============================================================================
+
+export type CommentFilters = {
+  postId?: number;
+  authorId?: number;
+  page?: number;
+  size?: number;
+  sort?: string;
+};
+
+// ============================================================================
+// MUTATION PAYLOADS
+// ============================================================================
 
 export interface CommentCreate {
   content: string;

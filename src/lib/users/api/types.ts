@@ -3,18 +3,18 @@
  * See: src/lib/users/schemas/user.schema.ts for form validation
  */
 
+// ============================================================================
+// ENUMS
+// ============================================================================
+
 export enum UserRole {
   USER = "USER",
   ADMIN = "ADMIN",
 }
 
-export type UserFilters = {
-  page?: number;
-  limit?: number;
-  roles?: string;
-  search?: string;
-  sort?: string;
-};
+// ============================================================================
+// CORE ENTITIES
+// ============================================================================
 
 export interface User {
   id: number;
@@ -29,15 +29,6 @@ export interface User {
   updatedAt: string;
 }
 
-export type UsersResponse = {
-  data: User[];
-  meta: {
-    total: number;
-    page: number;
-    limit: number;
-  };
-};
-
 export interface UserSummary {
   id: number;
   firstName: string;
@@ -47,18 +38,36 @@ export interface UserSummary {
   role?: UserRole;
 }
 
+// ============================================================================
+// REQUEST & RESPONSE TYPES
+// ============================================================================
+
+export type UserFilters = {
+  page?: number;
+  limit?: number;
+  roles?: string;
+  search?: string;
+  sort?: string;
+};
+
+export type UsersResponse = {
+  data: User[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+};
+
 export interface UserLogin {
   token: string;
   refreshToken: string;
   user: User;
 }
 
-export interface ResetPassword {
-  code: string;
-  resetToken: string;
-  email: string;
-  newPassword: string;
-}
+// ============================================================================
+// MUTATION PAYLOADS
+// ============================================================================
 
 export interface UserCreatePayload {
   email: string;
@@ -83,3 +92,14 @@ export interface UserUpdatePayload {
 }
 
 export type UserMutationPayload = UserCreatePayload;
+
+// ============================================================================
+// PASSWORD RESET
+// ============================================================================
+
+export interface ResetPassword {
+  code: string;
+  resetToken: string;
+  email: string;
+  newPassword: string;
+}

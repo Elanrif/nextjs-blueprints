@@ -8,7 +8,7 @@ import { ApiError } from "@/lib/_/errors/api-error";
 const {
   api: {
     rest: {
-      endpoints: { posts: POSTS_URL },
+      endpoints: { posts: postsUrl },
     },
   },
 } = proxyEnvironment;
@@ -22,7 +22,7 @@ export async function fetchPosts(
   const res = await frontendHttp().get<
     unknown,
     AxiosResponse<Result<Page<Post[]>, ApiError>>
-  >(POSTS_URL, { params: filters });
+  >(postsUrl, { params: filters });
   return res.data;
 }
 
@@ -35,6 +35,6 @@ export async function fetchPostById(
   const res = await frontendHttp().get<
     unknown,
     AxiosResponse<Result<Post, ApiError>>
-  >(`${POSTS_URL}/${id}`);
+  >(`${postsUrl}/${id}`);
   return res.data;
 }
