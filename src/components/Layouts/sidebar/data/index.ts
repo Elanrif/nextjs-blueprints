@@ -15,6 +15,24 @@ export const NAV_DATA = [
         ],
       },
       {
+        title: "Store",
+        icon: Icons.FourCircle,
+        items: [
+          {
+            title: "Users",
+            url: "/users",
+          },
+          {
+            title: "Posts",
+            url: "/posts",
+          },
+          {
+            title: "Comments",
+            url: "/comments",
+          },
+        ],
+      },
+      {
         title: "Calendar",
         url: "/calendar",
         icon: Icons.Calendar,
