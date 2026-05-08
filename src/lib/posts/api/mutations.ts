@@ -1,63 +1,27 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createPostAction, deletePostAction, updatePostAction } from "./action";
+import { mutationOptions } from "@tanstack/react-query";
 import { postKeys } from "./queries";
 import { PostCreate, PostUpdate } from "./types";
+import { getQueryClient } from "@/lib/query-client";
+import { createPostAction, deletePostAction, updatePostAction } from "./action";
 
-export function useCreatePost() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (data: PostCreate) => {
-      const res = await createPostAction(data);
-      if (!res.ok)
-        throw new Error(res.error?.detail || "Failed to create post");
-      return res.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: postKeys.all,
-      });
-    },
-  });
-}
+export const createPostMutation = mutationOptions({
+  mutationFn: (data: PostCreate) => createPostAction(data),
+  onSuccess: () => {
+    getQueryClient().invalidateQueries({ queryKey: postKeys.all });
+  },
+});
 
-/** Modifier un post */
-export function useUpdatePost() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: PostUpdate }) => {
-      const res = await updatePostAction(id, data);
-      if (!res.ok)
-        throw new Error(res.error?.detail || "Failed to update post");
-      return res.data;
-    },
-    onSuccess: (_, { id }) => {
-      queryClient.invalidateQueries({
-        queryKey: postKeys.detail(id),
-      });
-      queryClient.invalidateQueries({
-        queryKey: postKeys.all,
-      });
-    },
-  });
-}
+export const updatePostMutation = mutationOptions({
+  mutationFn: ({ id, values }: { id: number; values: PostUpdate }) =>
+    updatePostAction(id, values),
+  onSuccess: () => {
+    getQueryClient().invalidateQueries({ queryKey: postKeys.all });
+  },
+});
 
-/** Supprimer un post */
-export function useDeletePost() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async (id: number) => {
-      const res = await deletePostAction(id);
-      if (!res.ok)
-        throw new Error(res.error?.detail || "Failed to delete post");
-      return res.data;
-    },
-    onSuccess: (_, id) => {
-      queryClient.removeQueries({
-        queryKey: postKeys.detail(id),
-      });
-      queryClient.invalidateQueries({
-        queryKey: postKeys.all,
-      });
-    },
-  });
-}
+export const deletePostMutation = mutationOptions({
+  mutationFn: (id: number) => deletePostAction(id),
+  onSuccess: () => {
+    getQueryClient().invalidateQueries({ queryKey: postKeys.all });
+  },
+});

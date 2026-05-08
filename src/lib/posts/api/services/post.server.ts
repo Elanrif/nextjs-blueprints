@@ -9,13 +9,14 @@ import {
   PostCreate,
   PostFilters,
   PostUpdate,
+  PostsResult,
 } from "@/lib/posts/api/types";
 import {
-  parsePostCreate,
-  parsePostUpdate,
-} from "@/lib/posts/schemas/post.schema";
+  parsePostApiCreate,
+  parsePostApiUpdate,
+} from "@/lib/posts/schemas/post";
 import { ApiErrorResponse } from "@/lib/_/errors/api-error.server";
-import { Page, Result } from "@/lib/_/errors/response.model";
+import { Result } from "@/lib/_/errors/response.model";
 import { ApiError, badRequestApiError } from "@/lib/_/errors/api-error";
 import { validateId } from "@/utils";
 
@@ -39,15 +40,15 @@ const logger = getLogger("server");
  */
 export async function getPosts(
   filters?: PostFilters,
-): Promise<Result<Page<Post[]>, ApiError>> {
+): Promise<Result<PostsResult, ApiError>> {
   try {
-    const res = await apiClient(true).get<unknown, AxiosResponse<Page<Post[]>>>(
+    const res = await apiClient(true).get<unknown, AxiosResponse<PostsResult>>(
       postsUrl,
       {
         params: filters,
       },
     );
-    logger.debug({ count: res.data?.content?.length || 0 }, "Posts fetched");
+    logger.debug({ count: res.data?.data?.length || 0 }, "Posts fetched");
     return { ok: true, data: res.data };
   } catch (error) {
     logger.error({}, "Failed to fetch posts");
@@ -85,7 +86,7 @@ export async function getPostById(id: number): Promise<Result<Post, ApiError>> {
 export async function createPost(
   post: PostCreate,
 ): Promise<Result<Post, ApiError>> {
-  const parse = parsePostCreate(post);
+  const parse = parsePostApiCreate(post);
   if (!parse.success) {
     logger.warn(
       { context: "createPost" },
@@ -125,7 +126,7 @@ export async function updatePost(
   const idError = validateId(id);
   if (idError) return idError;
 
-  const parse = parsePostUpdate(post);
+  const parse = parsePostApiUpdate(post);
   if (!parse.success) {
     logger.warn({ context: "updatePost" }, "Validation failed for post update");
     return {

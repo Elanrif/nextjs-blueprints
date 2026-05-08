@@ -2,28 +2,30 @@
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { notFound } from "next/navigation";
-import { User } from "../api/types";
-import { userByIdOptions } from "../api/queries/queries.client";
-import { UserForm } from "./user-form";
+import { Comment } from "../api/types";
+import { commentByIdOptions } from "../api/queries/queries.client";
+import { CommentForm } from "./comment-form";
 
-type TUserViewPageProps = {
-  userId: string;
+type TCommentViewPageProps = {
+  commentId: string;
 };
 
-export default function CommentViewPage({ userId }: TUserViewPageProps) {
-  if (userId === "new") {
-    return <UserForm initialData={null} pageTitle="Create New User" />;
+export default function CommentViewPage({ commentId }: TCommentViewPageProps) {
+  if (commentId === "new") {
+    return <CommentForm initialData={null} pageTitle="Create New Comment" />;
   }
 
-  return <EditUserView userId={Number(userId)} />;
+  return <EditCommentView commentId={Number(commentId)} />;
 }
 
-function EditUserView({ userId }: { userId: number }) {
-  const { data } = useSuspenseQuery(userByIdOptions(userId));
+function EditCommentView({ commentId }: { commentId: number }) {
+  const { data } = useSuspenseQuery(commentByIdOptions(commentId));
 
   if (!data?.ok || !data?.data) {
     notFound();
   }
 
-  return <UserForm initialData={data.data as User} pageTitle="Edit User" />;
+  return (
+    <CommentForm initialData={data.data as Comment} pageTitle="Edit Comment" />
+  );
 }

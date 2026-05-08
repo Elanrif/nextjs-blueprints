@@ -1,31 +1,29 @@
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { getQueryClient } from "@/lib/query-client";
 import { searchParamsCache } from "@/lib/searchparams";
-import { usersQueryOptions } from "../api/queries/queries.server";
-import { UsersTable } from "./comments-table";
+import { commentsQueryOptions } from "../api/queries/queries.server";
+import { CommentsTable } from "./comments-table";
 
 export default function CommentListingPage() {
   const page = searchParamsCache.get("page");
-  const search = searchParamsCache.get("name");
+  const search = searchParamsCache.get("content");
   const pageLimit = searchParamsCache.get("perPage");
-  const roles = searchParamsCache.get("role");
   const sort = searchParamsCache.get("sort");
 
   const filters = {
     page,
     limit: pageLimit,
     ...(search && { search }),
-    ...(roles && { roles }),
     ...(sort && { sort }),
   };
 
   const queryClient = getQueryClient();
 
-  void queryClient.prefetchQuery(usersQueryOptions(filters));
+  void queryClient.prefetchQuery(commentsQueryOptions(filters));
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <UsersTable />
+      <CommentsTable />
     </HydrationBoundary>
   );
 }

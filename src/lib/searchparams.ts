@@ -13,6 +13,8 @@ export const searchParams = {
   category: parseAsString,
   role: parseAsString,
   sort: parseAsString,
+  title: parseAsString,
+  content: parseAsString,
   // advanced filter
   // filters: getFiltersStateParser().withDefault([]),
   // joinOperator: parseAsStringEnum(['and', 'or']).withDefault('and')

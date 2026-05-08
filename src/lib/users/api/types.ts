@@ -50,7 +50,7 @@ export type UserFilters = {
   sort?: string;
 };
 
-export type UsersResponse = {
+export type UsersResult = {
   data: User[];
   meta: {
     total: number;
@@ -69,7 +69,7 @@ export interface UserLogin {
 // MUTATION PAYLOADS
 // ============================================================================
 
-export interface UserCreatePayload {
+export interface UserCreate {
   email: string;
   firstName: string;
   lastName: string;
@@ -80,18 +80,18 @@ export interface UserCreatePayload {
   avatarUrl?: string;
 }
 
-export interface UserUpdatePayload {
-  email: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  role: UserRole;
+export interface UserUpdate {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  role?: UserRole;
   password?: string;
   confirmPassword?: string;
   avatarUrl?: string;
 }
 
-export type UserMutationPayload = UserCreatePayload;
+export type UserMutationPayload = UserCreate;
 
 // ============================================================================
 // PASSWORD RESET

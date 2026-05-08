@@ -30,6 +30,15 @@ export type PostFilters = {
   sort?: string;
 };
 
+export type PostsResult = {
+  data: Post[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+};
+
 // ============================================================================
 // MUTATION PAYLOADS
 // ============================================================================

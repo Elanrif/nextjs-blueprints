@@ -4,12 +4,15 @@ import apiClient from "@config/api.config";
 import environment from "@config/environment.config";
 import {
   User,
-  UserCreatePayload,
+  UserCreate,
   UserFilters,
-  UserUpdatePayload,
-  UsersResponse,
+  UserUpdate,
+  UsersResult,
 } from "@/lib/users/api/types";
-import { parseUserCreate, parseUserUpdate } from "@lib/users/schemas/user";
+import {
+  parseUserApiCreate,
+  parseUserApiUpdate,
+} from "@lib/users/schemas/user";
 import { getLogger } from "@config/logger.config";
 import { ApiErrorResponse } from "@/lib/_/errors/api-error.server";
 import { Result } from "@/lib/_/errors/response.model";
@@ -33,7 +36,7 @@ const logger = getLogger("server");
 
 export async function getUsers(
   filters: UserFilters,
-): Promise<Result<UsersResponse, ApiError>> {
+): Promise<Result<UsersResult, ApiError>> {
   try {
     // 🔥 Clean undefined params
     const cleanParams: Record<string, string> = {};
@@ -46,7 +49,7 @@ export async function getUsers(
     const queryParams = new URLSearchParams(cleanParams).toString();
     const url = `${usersUrl}${queryParams ? `?${queryParams}` : ""}`;
 
-    const res = await apiClient(true).get<UsersResponse>(url);
+    const res = await apiClient(true).get<UsersResult>(url);
     logger.info({ count: res.data.meta.total }, "get users");
     return { ok: true, data: res.data };
   } catch (error) {
@@ -62,12 +65,12 @@ export async function getUsers(
  * Create a new user
  */
 export async function createUser(
-  user: UserCreatePayload,
+  user: UserCreate,
 ): Promise<Result<User, ApiError>> {
   /**
    * Validate input data
    */
-  const parse = parseUserCreate(user);
+  const parse = parseUserApiCreate(user);
   if (!parse.success) {
     logger.warn(
       { context: "createUser", errors: parse.error.message },
@@ -111,12 +114,12 @@ export async function getUserById(id: number): Promise<Result<User, ApiError>> {
 
 export async function updateUser(
   id: number,
-  user: UserUpdatePayload,
+  user: UserUpdate,
 ): Promise<Result<User, ApiError>> {
   const idError = validateId(id);
   if (idError) return idError;
 
-  const parse = parseUserUpdate(user);
+  const parse = parseUserApiUpdate(user);
   if (!parse.success) {
     logger.warn(
       { context: "updateUser", errors: parse.error.message },

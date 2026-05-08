@@ -7,19 +7,19 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/lib/_/components/ui/dropdown-menu";
-import type { User } from "../../api/types";
+import type { Post } from "../../api/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { deleteUserMutation } from "../../api/mutations";
+import { deletePostMutation } from "../../api/mutations";
 import { Icons } from "@/lib/_/components/icons";
 import { AlertModal } from "@/lib/_/components/modal/alert-modal";
 import type { ApiError } from "@/lib/_/errors/api-error";
 import type { Result } from "@/lib/_/errors/response.model";
 
 interface CellActionProps {
-  data: User;
+  data: Post;
 }
 
 export function CellAction({ data }: CellActionProps) {
@@ -27,14 +27,14 @@ export function CellAction({ data }: CellActionProps) {
   const router = useRouter();
 
   const deleteMutation = useMutation({
-    ...deleteUserMutation,
+    ...deletePostMutation,
     onSuccess: (result: Result<{ success: boolean }, ApiError>) => {
       if (!result.ok) {
-        toast.error(result.error?.detail || "Failed to delete user");
+        toast.error(result.error?.detail || "Failed to delete post");
         return;
       }
 
-      toast.success("User deleted successfully");
+      toast.success("Post deleted successfully");
       setOpen(false);
     },
   });
@@ -56,7 +56,7 @@ export function CellAction({ data }: CellActionProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => router.push(`/users/${data.id}`)}>
+          <DropdownMenuItem onClick={() => router.push(`/posts/${data.id}`)}>
             <Icons.edit className="mr-2 h-4 w-4" /> Update
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>

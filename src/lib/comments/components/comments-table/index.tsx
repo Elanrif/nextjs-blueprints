@@ -4,37 +4,29 @@ import { DataTable } from "@/lib/_/components/ui/table/data-table";
 import { DataTableToolbar } from "@/lib/_/components/ui/table/data-table-toolbar";
 import { useDataTable } from "@/hooks/use-data-table";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import {
-  parseAsArrayOf,
-  parseAsInteger,
-  parseAsString,
-  useQueryStates,
-} from "nuqs";
+import { parseAsInteger, parseAsString, useQueryStates } from "nuqs";
 import { getSortingStateParser } from "@/lib/parsers";
-import { usersQueryOptions } from "@/lib/users/api/queries/queries.client";
+import { commentsQueryOptions } from "@/lib/comments/api/queries/queries.client";
 import { columns } from "./columns";
 
 const columnIds = columns.map((c) => c.id).filter(Boolean) as string[];
 
-export function UsersTable() {
+export function CommentsTable() {
   const [params] = useQueryStates({
     page: parseAsInteger.withDefault(1),
     perPage: parseAsInteger.withDefault(10),
-    name: parseAsString,
-    role: parseAsArrayOf(parseAsString, ","),
+    content: parseAsString,
     sort: getSortingStateParser(columnIds).withDefault([]),
   });
 
   const filters = {
     page: params.page,
     limit: params.perPage,
-    ...(params.name && { search: params.name }),
-    ...(params.role &&
-      params.role.length > 0 && { roles: params.role.join(",") }),
+    ...(params.content && { search: params.content }),
     ...(params.sort.length > 0 && { sort: JSON.stringify(params.sort) }),
   };
 
-  const { data } = useSuspenseQuery(usersQueryOptions(filters));
+  const { data } = useSuspenseQuery(commentsQueryOptions(filters));
 
   const pageCount = data.ok
     ? Math.ceil(data.data.meta.total / params.perPage)

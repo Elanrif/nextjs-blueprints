@@ -58,7 +58,7 @@ export const userCreateSchema = userBaseSchema
     path: ["confirmPassword"],
   });
 export type UserFormValues = z.infer<typeof userCreateSchema>;
-export const parseUserCreate = userCreateSchema.safeParse;
+export const parseUserApiCreate = userCreateSchema.safeParse;
 
 /**
  * User update schema — all fields optional with password validation
@@ -90,4 +90,4 @@ export const userUpdateSchema = userBaseSchema
     },
   );
 export type UserUpdateFormValues = z.infer<typeof userUpdateSchema>;
-export const parseUserUpdate = userUpdateSchema.safeParse;
+export const parseUserApiUpdate = userUpdateSchema.safeParse;

@@ -36,12 +36,7 @@ import {
   type UserUpdateFormValues,
 } from "../schemas/user";
 import { Icons } from "@/lib/_/components/icons";
-import {
-  User,
-  UserRole,
-  type UserCreatePayload,
-  type UserUpdatePayload,
-} from "../api/types";
+import { User, UserRole, type UserCreate, type UserUpdate } from "../api/types";
 import { userOptions } from "../constants/user-options";
 import { createUserMutation, updateUserMutation } from "../api/mutations";
 
@@ -128,7 +123,7 @@ export function UserForm({ initialData, pageTitle }: UserFormProps) {
   const onSubmit = (values: UserFormValues | UserUpdateFormValues) => {
     if (isEdit) {
       const updateValues = values as UserUpdateFormValues;
-      const payload: UserUpdatePayload = {
+      const payload: UserUpdate = {
         firstName: updateValues.firstName ?? "",
         lastName: updateValues.lastName ?? "",
         email: updateValues.email ?? "",
@@ -142,7 +137,7 @@ export function UserForm({ initialData, pageTitle }: UserFormProps) {
       });
     } else {
       const createValues = values as UserFormValues;
-      const payload: UserCreatePayload = {
+      const payload: UserCreate = {
         firstName: createValues.firstName,
         lastName: createValues.lastName,
         email: createValues.email,

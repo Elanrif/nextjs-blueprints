@@ -9,14 +9,15 @@ import {
   CommentCreate,
   CommentFilters,
   CommentUpdate,
+  CommentsResult,
 } from "@/lib/comments/api/types";
 import {
-  parseCommentCreate,
-  parseCommentUpdate,
-} from "@/lib/comments/schemas/comment.schema";
+  parseCommentApiCreate,
+  parseCommentApiUpdate,
+} from "@/lib/comments/schemas/comment";
 import { ApiErrorResponse } from "@/lib/_/errors/api-error.server";
 import { ApiError, badRequestApiError } from "@/lib/_/errors/api-error";
-import { Page, Result } from "@/lib/_/errors/response.model";
+import { Result } from "@/lib/_/errors/response.model";
 import { validateId } from "@/utils";
 
 /**
@@ -39,16 +40,16 @@ const logger = getLogger("server");
  */
 export async function getComments(
   filters?: CommentFilters,
-): Promise<Result<Page<Comment[]>, ApiError>> {
+): Promise<Result<CommentsResult, ApiError>> {
   try {
     const res = await apiClient(true).get<
       unknown,
-      AxiosResponse<Page<Comment[]>>
+      AxiosResponse<CommentsResult>
     >(commentsUrl, {
       params: filters,
     });
 
-    logger.debug({ count: res.data?.content?.length || 0 }, "Comments fetched");
+    logger.debug({ count: res.data?.data?.length || 0 }, "Comments fetched");
     return { ok: true, data: res.data };
   } catch (error) {
     logger.error({}, "Failed to fetch comments");
@@ -89,7 +90,7 @@ export async function getCommentById(
 export async function createComment(
   comment: CommentCreate,
 ): Promise<Result<Comment, ApiError>> {
-  const parse = parseCommentCreate(comment);
+  const parse = parseCommentApiCreate(comment);
   if (!parse.success) {
     logger.warn(
       { context: "createComment" },
@@ -130,7 +131,7 @@ export async function updateComment(
   const idError = validateId(id);
   if (idError) return idError;
 
-  const parse = parseCommentUpdate(comment);
+  const parse = parseCommentApiUpdate(comment);
   if (!parse.success) {
     logger.warn(
       { context: "updateComment" },

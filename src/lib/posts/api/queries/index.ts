@@ -1,4 +1,4 @@
-import { PostFilters } from "../types";
+import type { PostFilters } from "../types";
 
 export const postKeys = {
   all: ["posts"] as const,

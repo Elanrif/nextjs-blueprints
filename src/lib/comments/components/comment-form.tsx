@@ -1,11 +1,10 @@
-// components/users/UserForm.tsx
-// Formulaire de création/édition d'utilisateur
+// components/comments/CommentForm.tsx
+// Formulaire de création/édition de commentaire
 // Utilise react-hook-form + zod pour la validation
-// Compatible avec shadcn/ui (Card, Input, Button, Select)
+// Compatible avec shadcn/ui (Card, Input, Button)
 
 "use client";
 
-import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -19,121 +18,83 @@ import {
   CardHeader,
   CardTitle,
 } from "@/lib/_/components/ui/card";
-import { Input } from "@/lib/_/components/ui/input";
 import { Button } from "@/lib/_/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/lib/_/components/ui/select";
+import { Textarea } from "@/lib/_/components/ui/textarea";
 
 import {
-  userCreateSchema,
-  userUpdateSchema,
-  type UserFormValues,
-  type UserUpdateFormValues,
-} from "../schemas/user";
-import { Icons } from "@/lib/_/components/icons";
-import {
-  User,
-  UserRole,
-  type UserCreatePayload,
-  type UserUpdatePayload,
-} from "../api/types";
-import { userOptions } from "../constants/user-options";
-import { createUserMutation, updateUserMutation } from "../api/mutations";
+  commentCreateSchema,
+  commentUpdateSchema,
+  type CommentFormValues,
+  type CommentUpdateFormValues,
+} from "../schemas/comment";
+import type { Comment, CommentCreate, CommentUpdate } from "../api/types";
+import { createCommentMutation, updateCommentMutation } from "../api/mutations";
 
-interface UserFormProps {
-  initialData: User | null;
+interface CommentFormProps {
+  initialData: Comment | null;
   pageTitle: string;
 }
 
-export function CommentForm({ initialData, pageTitle }: UserFormProps) {
+export function CommentForm({ initialData, pageTitle }: CommentFormProps) {
   const router = useRouter();
   const isEdit = !!initialData;
-  const formSchema = isEdit ? userUpdateSchema : userCreateSchema;
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const formSchema = isEdit ? commentUpdateSchema : commentCreateSchema;
 
   // react-hook-form avec validation Zod
   const {
     register,
     handleSubmit,
-    setValue,
     formState: { errors, isSubmitting },
-  } = useForm<UserFormValues | UserUpdateFormValues>({
+  } = useForm<CommentFormValues | CommentUpdateFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: isEdit
       ? {
-          firstName: initialData?.firstName ?? "",
-          lastName: initialData?.lastName ?? "",
-          email: initialData?.email ?? "",
-          phoneNumber: initialData?.phoneNumber ?? "",
-          role: initialData?.role ?? UserRole.USER,
+          content: initialData?.content ?? "",
         }
       : {
-          firstName: "",
-          lastName: "",
-          email: "",
-          phoneNumber: "",
-          role: UserRole.USER,
-          password: "",
-          confirmPassword: "",
+          content: "",
         },
   });
 
-  // Synchroniser le select avec react-hook-form
-  useEffect(() => {
-    if (initialData?.role) {
-      setValue("role", initialData.role);
-    }
-  }, [initialData, setValue]);
-
   // Mutation création
   const createMutation = useMutation({
-    ...createUserMutation,
+    ...createCommentMutation,
     onSuccess: (result) => {
       if (!result.ok) {
-        toast.error(result.error?.detail || "Failed to create user");
+        toast.error(result.error?.detail || "Failed to create comment");
         return;
       }
-      toast.success("User created successfully");
-      router.push("/users");
+      toast.success("Comment created successfully");
+      router.push("/comments");
       router.refresh();
     },
     onError: () => {
-      toast.error("Failed to create user");
+      toast.error("Failed to create comment");
     },
   });
 
   // Mutation modification
   const updateMutation = useMutation({
-    ...updateUserMutation,
+    ...updateCommentMutation,
     onSuccess: (result) => {
       if (!result.ok) {
-        toast.error(result.error?.detail || "Failed to update user");
+        toast.error(result.error?.detail || "Failed to update comment");
         return;
       }
-      toast.success("User updated successfully");
-      router.push("/users");
+      toast.success("Comment updated successfully");
+      router.push("/comments");
       router.refresh();
     },
     onError: () => {
-      toast.error("Failed to update user");
+      toast.error("Failed to update comment");
     },
   });
 
-  const onSubmit = (values: UserFormValues | UserUpdateFormValues) => {
+  const onSubmit = (values: CommentFormValues | CommentUpdateFormValues) => {
     if (isEdit) {
-      const updateValues = values as UserUpdateFormValues;
-      const payload: UserUpdatePayload = {
-        firstName: updateValues.firstName ?? "",
-        lastName: updateValues.lastName ?? "",
-        email: updateValues.email ?? "",
-        phoneNumber: updateValues.phoneNumber ?? "",
-        role: updateValues.role ?? UserRole.USER,
+      const updateValues = values as CommentUpdateFormValues;
+      const payload: CommentUpdate = {
+        content: updateValues.content ?? "",
       };
 
       updateMutation.mutate({
@@ -141,15 +102,11 @@ export function CommentForm({ initialData, pageTitle }: UserFormProps) {
         values: payload,
       });
     } else {
-      const createValues = values as UserFormValues;
-      const payload: UserCreatePayload = {
-        firstName: createValues.firstName,
-        lastName: createValues.lastName,
-        email: createValues.email,
-        phoneNumber: createValues.phoneNumber,
-        role: createValues.role,
-        password: createValues.password,
-        confirmPassword: createValues.confirmPassword,
+      const createValues = values as CommentFormValues;
+      const payload: CommentCreate = {
+        content: createValues.content,
+        postId: 1, // À récupérer du contexte/params
+        authorId: 1, // À récupérer du contexte utilisateur
       };
 
       createMutation.mutate(payload);
@@ -163,185 +120,23 @@ export function CommentForm({ initialData, pageTitle }: UserFormProps) {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {/* Prénom */}
+          <div className="grid grid-cols-1 gap-6">
+            {/* Content */}
             <div className="space-y-2">
               <label className="text-sm font-medium">
-                First Name
+                Comment
                 <span className="ml-1 inline-block after:text-red-500 after:content-['*']" />
               </label>
-              <Input
-                {...register("firstName")}
-                placeholder="Enter first name"
-                className={errors.firstName ? "border-red-500" : ""}
+              <Textarea
+                {...register("content")}
+                placeholder="Write your comment here..."
+                className={errors.content ? "border-red-500" : ""}
+                rows={5}
               />
-              {errors.firstName && (
-                <p className="text-sm text-red-500">
-                  {errors.firstName.message}
-                </p>
+              {errors.content && (
+                <p className="text-sm text-red-500">{errors.content.message}</p>
               )}
             </div>
-
-            {/* Nom */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Last Name
-                <span className="ml-1 inline-block after:text-red-500 after:content-['*']" />
-              </label>
-              <Input
-                {...register("lastName")}
-                placeholder="Enter last name"
-                className={errors.lastName ? "border-red-500" : ""}
-              />
-              {errors.lastName && (
-                <p className="text-sm text-red-500">
-                  {errors.lastName.message}
-                </p>
-              )}
-            </div>
-
-            {/* Email */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Email
-                <span className="ml-1 inline-block after:text-red-500 after:content-['*']" />
-              </label>
-              <Input
-                type="email"
-                {...register("email")}
-                placeholder="Enter email"
-                className={errors.email ? "border-red-500" : ""}
-              />
-              {errors.email && (
-                <p className="text-sm text-red-500">{errors.email.message}</p>
-              )}
-            </div>
-
-            {/* Téléphone */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">
-                Phone Number
-                <span className="ml-1 inline-block after:text-red-500 after:content-['*']" />
-              </label>
-              <Input
-                {...register("phoneNumber")}
-                placeholder="Enter phone number"
-                className={errors.phoneNumber ? "border-red-500" : ""}
-              />
-              {errors.phoneNumber && (
-                <p className="text-sm text-red-500">
-                  {errors.phoneNumber.message}
-                </p>
-              )}
-            </div>
-
-            {/* Mot de passe (uniquement en création) */}
-            {!isEdit && (
-              <>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Password
-                    <span className="ml-1 inline-block after:text-red-500 after:content-['*']" />
-                  </label>
-                  <div className="relative">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      {...register("password")}
-                      placeholder="Enter password"
-                      className={errors.password ? "border-red-500" : ""}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((s) => !s)}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                      aria-label={
-                        showPassword ? "Hide password" : "Show password"
-                      }
-                    >
-                      {showPassword ? (
-                        <Icons.eyeOff className="h-5 w-5" />
-                      ) : (
-                        <Icons.eye className="h-5 w-5" />
-                      )}
-                    </button>
-                  </div>
-                  {errors.password && (
-                    <p className="text-sm text-red-500">
-                      {errors.password.message}
-                    </p>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Confirm Password
-                    <span className="ml-1 inline-block after:text-red-500 after:content-['*']" />
-                  </label>
-                  <div className="relative">
-                    <Input
-                      type={showConfirmPassword ? "text" : "password"}
-                      {...register("confirmPassword")}
-                      placeholder="Confirm password"
-                      className={errors.confirmPassword ? "border-red-500" : ""}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword((s) => !s)}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                      aria-label={
-                        showConfirmPassword
-                          ? "Hide confirm password"
-                          : "Show confirm password"
-                      }
-                    >
-                      {showConfirmPassword ? (
-                        <Icons.eyeOff className="h-5 w-5" />
-                      ) : (
-                        <Icons.eye className="h-5 w-5" />
-                      )}
-                    </button>
-                  </div>
-                  {errors.confirmPassword && (
-                    <p className="text-sm text-red-500">
-                      {errors.confirmPassword.message}
-                    </p>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-
-          {/* Rôle */}
-          <div className="w-full space-y-2 md:w-1/2">
-            <label className="text-sm font-medium">
-              Role
-              <span className="ml-1 inline-block after:text-red-500 after:content-['*']" />
-            </label>
-            <Select
-              onValueChange={(value) => setValue("role", value as UserRole)}
-              defaultValue={
-                initialData?.role?.toString() ?? UserRole.USER.toString()
-              }
-            >
-              <SelectTrigger
-                className={`w-full py-5 ${errors.role ? "border-red-500" : ""}`}
-              >
-                <SelectValue placeholder="Select a role" />
-              </SelectTrigger>
-              <SelectContent>
-                {userOptions.map((option) => (
-                  <SelectItem
-                    key={option.value}
-                    value={option.value.toString()}
-                  >
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {errors.role && (
-              <p className="text-sm text-red-500">{errors.role.message}</p>
-            )}
           </div>
 
           {/* Boutons d'action */}
@@ -356,9 +151,9 @@ export function CommentForm({ initialData, pageTitle }: UserFormProps) {
             <Button type="submit" disabled={isSubmitting}>
               {isSubmitting
                 ? "Saving..."
-                : isEdit
-                  ? "Update User"
-                  : "Create User"}
+                : (isEdit
+                  ? "Update Comment"
+                  : "Create Comment")}
             </Button>
           </div>
         </form>

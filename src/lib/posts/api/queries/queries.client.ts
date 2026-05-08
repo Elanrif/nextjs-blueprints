@@ -1,28 +1,16 @@
-import { useQuery } from "@tanstack/react-query";
-import { PostFilters } from "../types";
-import { postKeys } from ".";
+import { queryOptions } from "@tanstack/react-query";
+import type { PostFilters } from "../types";
 import { fetchPostById, fetchPosts } from "../services/post.client";
+import { postKeys } from ".";
 
-export function usePosts(filters?: PostFilters) {
-  return useQuery({
+export const postsQueryOptions = (filters: PostFilters) =>
+  queryOptions({
     queryKey: postKeys.list(filters),
-    queryFn: async () => {
-      const res = await fetchPosts(filters);
-      if (!res.ok)
-        throw new Error(res.error?.detail || "Failed to fetch posts");
-      return res.data;
-    },
+    queryFn: () => fetchPosts(filters),
   });
-}
 
-export function usePost(id: number) {
-  return useQuery({
+export const postByIdOptions = (id: number) =>
+  queryOptions({
     queryKey: postKeys.detail(id),
-    queryFn: async () => {
-      const res = await fetchPostById(id);
-      if (!res.ok) throw new Error(res.error?.detail || "Failed to fetch post");
-      return res.data;
-    },
-    enabled: !!id,
+    queryFn: () => fetchPostById(id),
   });
-}

@@ -25,6 +25,15 @@ export type CommentFilters = {
   sort?: string;
 };
 
+export type CommentsResult = {
+  data: Comment[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+};
+
 // ============================================================================
 // MUTATION PAYLOADS
 // ============================================================================

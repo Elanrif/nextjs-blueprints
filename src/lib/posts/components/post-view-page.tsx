@@ -2,28 +2,28 @@
 
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { notFound } from "next/navigation";
-import { User } from "../api/types";
-import { userByIdOptions } from "../api/queries/queries.client";
-import { UserForm } from "./user-form";
+import { Post } from "../api/types";
+import { postByIdOptions } from "../api/queries/queries.client";
+import { PostForm } from "./post-form";
 
-type TUserViewPageProps = {
-  userId: string;
+type TPostViewPageProps = {
+  postId: string;
 };
 
-export default function PostViewPage({ userId }: TUserViewPageProps) {
-  if (userId === "new") {
-    return <UserForm initialData={null} pageTitle="Create New User" />;
+export default function PostViewPage({ postId }: TPostViewPageProps) {
+  if (postId === "new") {
+    return <PostForm initialData={null} pageTitle="Create New Post" />;
   }
 
-  return <EditUserView userId={Number(userId)} />;
+  return <EditPostView postId={Number(postId)} />;
 }
 
-function EditUserView({ userId }: { userId: number }) {
-  const { data } = useSuspenseQuery(userByIdOptions(userId));
+function EditPostView({ postId }: { postId: number }) {
+  const { data } = useSuspenseQuery(postByIdOptions(postId));
 
   if (!data?.ok || !data?.data) {
     notFound();
   }
 
-  return <UserForm initialData={data.data as User} pageTitle="Edit User" />;
+  return <PostForm initialData={data.data as Post} pageTitle="Edit Post" />;
 }
