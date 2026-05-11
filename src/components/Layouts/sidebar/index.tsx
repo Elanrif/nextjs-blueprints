@@ -97,7 +97,7 @@ export function Sidebar() {
                   <ul className="space-y-2">
                     {section.items.map((item) => (
                       <li key={item.title}>
-                        {item.items.length ? (
+                        {item.items.length > 0 ? (
                           <div>
                             <MenuItem
                               isActive={item.items.some(
@@ -145,7 +145,7 @@ export function Sidebar() {
                           (() => {
                             const href =
                               "url" in item
-                                ? item.url + ""
+                                ? String(item.url)
                                 : "/" +
                                   item.title.toLowerCase().split(" ").join("-");
 

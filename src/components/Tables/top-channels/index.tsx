@@ -8,7 +8,6 @@ import {
 } from "@/components/ui/table";
 import { compactFormat, standardFormat } from "@/lib/format-number";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
 import { getTopChannels } from "../fetch";
 
 export async function TopChannels({ className }: { className?: string }) {
@@ -43,12 +42,8 @@ export async function TopChannels({ className }: { className?: string }) {
               key={channel.name + i}
             >
               <TableCell className="flex min-w-fit items-center gap-3">
-                <Image
-                  src={channel.logo}
-                  className="size-8 rounded-full object-cover"
-                  width={40}
-                  height={40}
-                  alt={channel.name + " Logo"}
+                <channel.logo
+                  className="size-8 shrink-0 rounded-full object-cover"
                   role="presentation"
                 />
                 <div className="">{channel.name}</div>
